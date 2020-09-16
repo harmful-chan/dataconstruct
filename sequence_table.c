@@ -5,15 +5,15 @@
 #define BASE_SIZE 5
 
 #define MAX_BYTE_SIZE(i) ( (int)pow(2, i) * BASE_SIZE * sizeof(int) )
-#define CUR_MAX_BYTE_SIZE ( (int)pow(2, expansion) * BASE_SIZE * sizeof(int) )
 #define MAX_TYPE_SIZE(i) ( MAX_BYTE_SIZE(i) >> 2 )
-#define CUR_MAX_TYPE_SIZE ( CUR_MAX_BYTE_SIZE >> 2 )
+
 //sequence list for dynamic
 static int expansion;
 typedef struct 
 {
 	int* data;
 	int length;
+	int expansion;
 } SeqList;
 
 
@@ -21,22 +21,23 @@ typedef struct
 //init sequence
 void InitList(SeqList *list)
 {
-	expansion = 0;
-	list->data = (int*)malloc(CUR_MAX_BYTE_SIZE);
-	memset(list->data, '\0', CUR_MAX_BYTE_SIZE);
+	list->expansion = 0;
+	list->data = (int*)malloc(MAX_BYTE_SIZE(list->expansion));
+	memset(list->data, '\0', MAX_BYTE_SIZE(expansion));
 }
 
 //destroy list
 void DestroyList(SeqList* list)
 {
 	free(list->data);
+	list->length = 0;
 	list->expansion = 0;
 }
 
 //clear list
 void Empty(SeqList* list)
 {
-	memset(list->data, '\0', CUR_MAX_BYTE_SIZE);
+	memset(list->data, '\0', MAX_BYTE_SIZE(list->expansion));
 }
 
 //get list length
@@ -68,7 +69,7 @@ int Get(SeqList* list, int index)
 int Insert(SeqList *list, int index, int elm)
 {
 	int expan_count = 0;
-	for( int i = expansion; \
+	for( int i = list->expansion; \
 		MAX_TYPE_SIZE(i) <= index;\
 		 expan_count++, i++ );
 	 if( expan_count > 0 ) 
@@ -76,10 +77,10 @@ int Insert(SeqList *list, int index, int elm)
 		//The index more than maximum size
 		//, list will expanded length of 2^'expansion'.
 		int* old = (list->data != NULL) ? list->data : NULL;
-		expansion = expansion + expan_count;
-		list->data = (int*)malloc(CUR_MAX_BYTE_SIZE);
-		memset(list->data, '\0', CUR_MAX_BYTE_SIZE);
-		memcpy(list->data, old, MAX_BYTE_SIZE(expansion - expan_count));  
+		list->expansion +=  expan_count;
+		list->data = (int*)malloc(MAX_BYTE_SIZE(list->expansion));
+		memset(list->data, '\0', MAX_BYTE_SIZE(list->expansion));
+		memcpy(list->data, old, MAX_BYTE_SIZE(list->expansion - expan_count));  
 		free(old);
 	}
 
@@ -102,7 +103,7 @@ int Delete(SeqList* list, int index)
 //show all of list element.
 void ToString(SeqList *list)
 {
-	printf("length: %-3d, cur_max_byte_size: %-3d, elm: ", list->length, CUR_MAX_TYPE_SIZE);
+	printf("length: %-3d, cur_max_byte_size: %-3d, elm: ", list->length, MAX_TYPE_SIZE(list->expansion));
 	for(int i = 0; i < list->length; i++)
 	{
 		printf("%d ", list->data[i]);
