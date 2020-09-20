@@ -1,4 +1,4 @@
-#include "tail_link.h"
+#include "link.h"
 #include "typedef.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,13 +24,14 @@ int DestroyLinkList(LinkList list)
 	//if next element exist, 'n' keep element 'next'
 	//,and free current element.
 	LNode* p = list->next;
-	for(LNode*  n = NULL; p != NULL; free(p), p = n)
+	for(LNode* t = NULL; p != NULL; free(p), p = t)
 	{
-		n = p->next;
+		t = p->next;
 	}
 	free(list);
 	return 0;
 }
+
 
 int Locate(LinkList list, elm_t elm)
 {
@@ -63,10 +64,25 @@ int Add(LinkList list, elm_t elm)
 
 	ASSERT(list != NULL);
 	LNode* p = list;
+#if defined(HEAD_MODE)
+	if(p->next != NULL)
+	{
+		LNode* t = p->next;
+		p->next = (LNode*)malloc(sizeof(LNode));
+		p->next->data = elm;
+		p->next->next = t;
+	}else
+	{
+		p->next = (LNode*)malloc(sizeof(LNode));
+		p->next->data = elm;
+		p->next->next = NULL;
+	}
+#else
 	for( ; p->next != NULL ; p = p->next );
 	p->next = (LNode*)malloc(sizeof(LNode));
 	p->next->data = elm;
 	p->next->next = NULL;
+#endif
 	return 0;
 }
 
@@ -74,10 +90,10 @@ int Delete(LinkList list, int index)
 {
 	ASSERT(list != NULL && index >= 0);
 
-	LNode* p = list->next;
-	for(int i = 0; p != NULL; p = p->next, i++)
+	LNode* p = list;
+	for(int i = 0; p->next != NULL; p = p->next, i++)
 	{
-		if( (index == (i+1)) && (p->next != NULL) )
+		if( index == i )
 		{
 			LNode* elm = p->next;
 			p->next = p->next->next;
@@ -102,10 +118,10 @@ void ToString(LinkList list)
 
 int Insert(LinkList list, int index, elm_t elm)
 {
-	LNode* p = list->next;
-	for(int i = 0; p != NULL; p = p->next, i++)
+	LNode* p = list;
+	for(int i = 0; p->next != NULL; p = p->next, i++)
 	{
-		if( (index == (i+1)) && (p->next != NULL) )
+		if( index == i )
 		{
 			LNode* e = (LNode*)malloc(sizeof(LNode));
 			e->data = elm;
@@ -120,41 +136,14 @@ int Insert(LinkList list, int index, elm_t elm)
 int Replace(LinkList list, int index, elm_t elm)
 {
 
-	LNode* p = list->next;
-	for(int i = 0; p != NULL; p = p->next, i++)
+	LNode* p = list;
+	for(int i = 0; p->next != NULL; p = p->next, i++)
 	{
-		if( (index == (i+1)) && (p->next != NULL) )
+		if( index == i )
 		{
 			p->next->data = elm;
+			return 1;
 		}
 	}
 	return -1;
-}
-void main(void)
-{
-	LinkList list = CreateLinkList();
-	printf("add elements\r\n");
-	Add(list, 1);
-	Add(list, 2);
-	Add(list, 3);
-	Add(list, 4);
-	Add(list, 5);
-	Add(list, 6);
-	ToString(list);
-
-	printf("data 6 index is [%2d]\r\n", Locate(list, 6));
-	printf("[ 6] data is %2d\r\n", Get(list, Locate(list, 6))->data);
-	printf("delete index 3 element.\r\n");
-	Delete(list, 3);
-	ToString(list);	
-
-	printf("insert 99 in the index 4\r\n");
-	Insert(list, 4, 99);
-	ToString(list);
-
-	printf("replace index of 2 data to 71\r\n");
-	Replace(list, 2, 71);
-	ToString(list);
-	
-	DestroyLinkList(list);
 }
