@@ -1,8 +1,6 @@
 #include "link.h"
-#include "typedef.h"
 #include <stdio.h>
 #include <stdlib.h>
-#define ASSERT(i) if( !(i) ) return -1;
 
 int Equal(elm_t s, elm_t d)
 {
