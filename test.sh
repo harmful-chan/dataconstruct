@@ -1,10 +1,12 @@
 #!/bin/sh
 
+file=$1
+shift
 
 rm -rf ./test core.*
-echo "#include \"${1/_link.c/_def.h}\"" > ./includes/config.h
+echo "#include \"${file/_link.c/_def.h}\"" > ./includes/config.h
 
-make test TEST_TARGET=$1 DEFINES=$2
+make test TEST_TARGET=${file} DEFINES=$@
 ./test
 
 

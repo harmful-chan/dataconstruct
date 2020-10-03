@@ -2,53 +2,56 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int Equal(elm_t s, elm_t d)
+int equal(node_t* s, node_t* d)
 {
-	return (s == d) ? 1 : -1;
+	return (s->data == d->data);
 }
 
-LinkList CreateLinkList()
+head_t* create_link()
 {
-	LinkList l = (LinkList)malloc(sizeof(LNode));
-	l->data = -1;
-	l->next = NULL; 
-	return l;
+	head_t *p = (head_t *)malloc(sizeof(head_t));
+	p->count = 0;
+	p->next = NULL;
+	return p;
 }
 
-int DestroyLinkList(LinkList list)
+node_t* create_node(elm_t data)
 {
-	ASSERT(list != NULL);
-	
-	//if next element exist, 'n' keep element 'next'
-	//,and free current element.
-	LNode* p = list->next;
-	for(LNode* t = NULL; p != NULL; free(p), p = t)
+	node_t *p = (node_t *)malloc(sizeof(node_t));
+	p->data = data;
+
+	p->next = NULL;
+	return p;
+}
+
+void destroy_link(head_t *list)
+{
+	node_t *d, *p;
+	p =  list->next;
+	for(; p != NULL;)
 	{
-		t = p->next;
+		d = p->next;
+		free(p);
+		p = d;
 	}
-	free(list);
-	return 0;
 }
 
 
-int Locate(LinkList list, elm_t elm)
+int locate_node(head_t *list, elm_t elm)
 {
-	ASSERT(list != NULL);
-
-	LNode* p = list->next;
+	node_t *p = list->next;
+	node_t *d = &((node_t){ elm, NULL });
 	for(int i = 0 ; p != NULL; p = p->next, i++ )
 	{
-		if( Equal(p->data, elm) >= 0) return i;
+		if( equal(p, d) ) return i;
 	}
 
 	return -1;
 }
 
-LNode* Get(LinkList list, int index)
+node_t* get_node(head_t *list, int index)
 {
-	if( index < 0 ) return NULL;
-
-	LNode* p = list->next;
+	node_t *p = list->next;
 	for(int i = 0 ; p != NULL; p = p->next, i++ )
 	{
 		if( index == i ) return p;
@@ -57,91 +60,90 @@ LNode* Get(LinkList list, int index)
 	return NULL;
 }
 
-int Add(LinkList list, elm_t elm)
+void add_node(head_t *list, node_t *new)
 {
-
-	ASSERT(list != NULL);
-	LNode* p = list;
-#if defined(HEAD_MODE)
-	if(p->next != NULL)
-	{
-		LNode* t = p->next;
-		p->next = (LNode*)malloc(sizeof(LNode));
-		p->next->data = elm;
-		p->next->next = t;
-	}else
-	{
-		p->next = (LNode*)malloc(sizeof(LNode));
-		p->next->data = elm;
-		p->next->next = NULL;
-	}
+	node_t *p = NULL;
+#if defined( HEAD_MODE )
+	p = list;
+	if( p == NULL )	return;
+	new->next = p->next;
+	p->next = new;
 #else
-	for( ; p->next != NULL ; p = p->next );
-	p->next = (LNode*)malloc(sizeof(LNode));
-	p->next->data = elm;
-	p->next->next = NULL;
+	if( list->count==0 ) p = list;
+	else p = get_node(list,  list->count-1);
+	if( p == NULL )	return;
+	p->next = new;	
 #endif
-	return 0;
+
+	list->count++;
 }
 
-int Delete(LinkList list, int index)
+void delete_node(head_t *list, int index)
 {
-	ASSERT(list != NULL && index >= 0);
+	node_t *d, *p;
+	p = get_node(list, index-1);
+	if( p == NULL )	return;
 
-	LNode* p = list;
-	for(int i = 0; p->next != NULL; p = p->next, i++)
+	d = p->next;
+	p->next = p->next->next;
+	free(d);
+	list->count--;
+}
+
+void insert_node(head_t* list, int index, node_t* new)
+{
+	node_t* p = get_node(list, index-1);
+	if( p == NULL )	return;
+
+	new->next = p->next->next;
+	p->next = new;
+}
+void replace_node(head_t* list, int index, node_t* new)
+{
+	node_t* p = get_node(list, index-1);
+	if( p == NULL )	return;
+
+	new->next = p->next->next;
+	free(p->next);
+	p->next = new;
+}
+
+void show(head_t *list)
+{
+	
+	int index = 0;
+	int length = 10;
+	while(1)
 	{
-		if( index == i )
+		system("clear");
+		if(index < list->count)
 		{
-			LNode* elm = p->next;
-			p->next = p->next->next;
-			free(elm);
-			return 1;
+			//index
+			for(int i = index;
+				(i < index + length) && (i < list->count); 
+				printf("[%2d] ", i), i++);
+			printf("\r\n");
+			
+			//data
+			node_t *p = get_node(list, index);
+			for(int i = 0; 
+				p != NULL && i < length; 
+				p=p->next, i++)
+			{
+				printf(" %2d  ", p->data);
+			}
+			printf("\r\n");
+		}
+
+		//get input direct.
+		unsigned char ch[4] = {0};
+		for(int i =0; i < 4; ch[i]=getchar(), i++);
+		switch(ch[2])
+		{
+			case 68: if(index > 0) index--; break;
+			case 67: index++; break;
+			default: break;
 		}
 	}
-
-	return -1;
 }
 
-void ToString(LinkList list)
-{
-	int i = 0;
-	LNode* p = list->next;
-	for(i = 0; p != NULL; p = p->next, i++)
-	{
-		printf("[%2d]:%4d\r\n", i, p->data);
-	}
-	printf("size of %d\r\n", i);
-}
-
-int Insert(LinkList list, int index, elm_t elm)
-{
-	LNode* p = list;
-	for(int i = 0; p->next != NULL; p = p->next, i++)
-	{
-		if( index == i )
-		{
-			LNode* e = (LNode*)malloc(sizeof(LNode));
-			e->data = elm;
-			e->next = p->next;
-			p->next = e;
-			return 1;
-		}
-	}
-
-	return -1;
-}
-int Replace(LinkList list, int index, elm_t elm)
-{
-
-	LNode* p = list;
-	for(int i = 0; p->next != NULL; p = p->next, i++)
-	{
-		if( index == i )
-		{
-			p->next->data = elm;
-			return 1;
-		}
-	}
-	return -1;
-}

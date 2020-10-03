@@ -3,11 +3,17 @@
 
 typedef int elm_t;
 
-typedef struct Node
+typedef struct node_s
 {
 	elm_t data;
-	struct Node* prio;
-	struct Node* next;
-}LNode, *LinkList;
+	struct node_s *next, *prev;
+}node_t;
+
+typedef struct head_s
+{
+	int length;
+	struct node_s *next, *prev;
+}head_t;
+
 
 #endif
