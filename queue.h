@@ -11,6 +11,7 @@ typedef struct queue_node_s
 typedef struct queue_s
 {
 	int is_empty;
+	int length;
 	struct queue_node_s *next, *prev;
 }queue_t;
 

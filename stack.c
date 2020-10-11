@@ -5,6 +5,7 @@ stack_t *init_stack(stack_t *stack)
 {
 	stack->is_empty = 1;
 	stack->next = NULL;
+	stack->first = 0;
 	return stack;
 }
 
@@ -27,7 +28,7 @@ void push(stack_t *stack, elm_t new)
 
 	p->next = stack->next;
 	stack->next = p;
-
+	stack->first = new;
 }
 elm_t pop(stack_t *stack)
 {
@@ -35,7 +36,14 @@ elm_t pop(stack_t *stack)
 	if( p != NULL )
 	{ 
 		stack->next = p->next;
-		if( stack->next == NULL ) stack->is_empty = 1;
+		if( stack->next == NULL )
+		{
+			stack->is_empty = 1;
+			stack->first = 0;
+		}else
+		{
+			stack->first = stack->next->data;
+		}
 		elm_t data = p->data;
 		free(p);
 		return data;
