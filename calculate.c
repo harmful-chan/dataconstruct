@@ -13,8 +13,9 @@ static inline int is_sym_prio(char c)
 	return ((c=='*') || (c=='/'));
 }
 
-static inline int is_brackets(char c)
+static inline int is_brackets(char c) 
 {
+
 	return ( (c=='(') || (c==')') );
 }
 
@@ -37,61 +38,23 @@ static int get_first_num(char *str, int *num)
 
 void symbol_assignment(char c, stack_t* sym, queue_t* dst)
 {
-	static int cases = 0;
-	switch(cases)
+	if( !is_sym_prio(c) || (c == ')') )  // +,-,)
 	{
-		case 0 : cases = 1;
-		case 1 : 
-			push(sym, c); 
-			cases = is_sym_prio(c) ? 2 : 1;
-			cases = is_brackets(c) ? 3 : cases;
-			break;
-		case 2 :
-			for(char s = (char)sym->first; 
-				!is_sym_prio(c) && \
-				!is_brackets(s) && \
-				!sym->is_empty;
-				s = (char)sym->first)
-			{
-				elm_t ret = pop(sym);
-				entry(dst, ret);
-			}
-			push(sym, c);
-			cases = 1;
-			break;
-		case 3 :
-			for(char s = (char)sym->first; 
-				(c == ')') && (s != '(');
-				s = sym->first)
-			{
-				elm_t ret = pop(sym);
-				entry(dst, ret);
-			} 
-			if( c == ')' ) pop(sym);
-			cases = 1;
-			break;
-		default : break;
-	}
-/*
-	if( is_sym_prio(c) )
-	{
-		for(char s = (char)sym->first; 
-			!is_sym_prio(c) && \
-			!is_brackets(s) && \
-			!sym->is_empty;
-			s = (char)sym->first)
+		char d = (char)sym->first; 
+		if( is_sym_prio(d) || c == ')' )  // *,/,)
 		{
-			elm_t ret = pop(sym);
-			entry(dst, ret);
+			while( !sym->is_empty && (sym->first != '(') )
+			{
+				entry(dst, pop(sym));
+			}
+			if( sym->first == '(' )
+			{
+				pop(sym);
+				return;
+			}
 		}
-		push(sym, c);
-		
 	}
-	else if( is_brackets(c) )
-	{
-
-	}
-*/
+	push(sym, c);
 }
 int infix_to_postfix(queue_t *dst, const char *infix)
 {
