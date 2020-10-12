@@ -5,18 +5,24 @@
 
 static inline int is_symbol(char c)
 {
-	return ( (c=='+') || (c=='-') || (c=='*') || (c=='/') );
+	return ( (c=='+') || (c=='-') || (c=='*') || (c=='/') \
+			|| (c=='(') || (c==')'));
 }
 int main(int argc, char* argv[])
 {
 	queue_t q;
 	if( !init_queue(&q) ) printf("init queue fail!\r\n");
 
+	char *exp = "1+2+3";
+	printf("input expression :%s\r\n", (argc==2)?argv[1]:exp);
 	if( argc == 2 )
 		infix_to_postfix(&q, argv[1]);
 	else	
 		infix_to_postfix(&q, "1+2+3");
 		
+	int ret = cypher_postfix(&q);
+	printf("result : %d\r\n", ret);
+	
 	printf("queue is empty: %d\r\n", q.is_empty);
 	while( !q.is_empty )
 	{
@@ -25,7 +31,7 @@ int main(int argc, char* argv[])
 			printf("%c ", data);
 		else
 			printf("%d ", data);
-	}
+	}printf("\r\n");
 
 	return 0;
 }

@@ -36,7 +36,7 @@ static int get_first_num(char *str, int *num)
 
 
 
-void symbol_assignment(char c, stack_t* sym, queue_t* dst)
+static void symbol_assignment(char c, stack_t* sym, queue_t* dst)
 {
 	if( !is_sym_prio(c) || (c == ')') )  // +,-,)
 	{
@@ -79,4 +79,31 @@ int infix_to_postfix(queue_t *dst, const char *infix)
 	return dst->length;
 }
 
+int cypher_postfix(queue_t *q)
+{
+	stack_t stack;
+	init_stack(&stack);
 
+	while( !q->is_empty )
+	{
+		int v = (int)out(q);
+		if( !is_symbol((char)v) )
+		{
+			push(&stack, v);
+		}
+		else
+		{
+			int b = (int)pop(&stack);
+			int f = (int)pop(&stack);
+			switch((char)v)
+			{
+				case '+': push(&stack, f+b); break;
+				case '-': push(&stack, f-b); break;
+				case '*': push(&stack, f*b); break;
+				case '/': push(&stack, f/b); break;
+				default : break;
+			}
+		}
+	}
+	return (int)pop(&stack);
+}
