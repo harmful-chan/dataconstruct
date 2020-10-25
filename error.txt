@@ -1,0 +1,8 @@
+kmp.c: In function ‘kmp_next’:
+kmp.c:26:14: error: expected expression before ‘]’ token
+    equal(str[])
+              ^
+kmp.c:26:14: error: too few arguments to function ‘equal’
+kmp.c:5:5: note: declared here
+ int equal(const char *str, const char *sub, int length)
+     ^
