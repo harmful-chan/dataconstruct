@@ -15,10 +15,11 @@ extern BSTree *InitBST(BSTree *);
 extern BSTNode *InitBSTNode(BSTNode *, ElemType);
 
 extern BSTNode *InsertBSTNode(BSTree *, BSTNode *);
-extern BSTNode *FindBSTNode(BSTree *, ElemType);
-extern int DeleteBSTNode(BSTree *, BSTNode *);
+extern int DeleteBSTNode(BSTree *, ElemType);
 
 extern void ShowPrefix(BSTree *);
 extern void ShowInfix(BSTree *);
 extern void ShowPostfix(BSTree *);
+
+extern void Show(BSTree *);
 #endif
