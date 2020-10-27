@@ -3,14 +3,32 @@
 #include "queue.h"
 #include <stdio.h>
 
-static inline BSTNode *Search(BSTree *tree, ElemType data)
+static inline 
+BSTNode *SearchParent(BSTree *tree, ElemType data)
 {
 	BSTNode *p = tree;
 	
 	if(data < p->data && p->left != NULL)
-		p = Search(p->left, data);
+		p = SearchParent(p->left, data);
 	else if(data > p->data && p->rigt != NULL)
-		p = Search(p->rigt, data);
+		p = SearchParent(p->rigt, data);
+	
+	return p;
+}
+
+static inline
+BSTNode *Search(BSTree *tree, ElemType data)
+{
+	BSTNode *p = tree;
+	if(p != NULL)
+	{
+		p = SearchParent(tree, data);
+		BSTNode *ret = NULL;
+		ret=(p->data == data)?p:NULL;
+		ret=p->left?(p->left->data == data)?p->left:NULL:NULL;
+		ret=p->rigt?(p->rigt->data == data)?p->rigt:NULL:NULL;
+		p = ret;
+	}
 	return p;
 }
 
@@ -41,7 +59,7 @@ BSTNode *InitBSTNode(BSTNode *node, ElemType data)
 	}
 
 	BSTNode *p = tree;
-	p = Search(tree, node->data);    //find node
+	p = SearchParent(tree, node->data);    //find node
 	node->pare = p;
 	if(node->data < p->data)    //left
 	{
@@ -60,112 +78,132 @@ BSTNode *InitBSTNode(BSTNode *node, ElemType data)
 
 int DeleteBSTNode(BSTree *tree, ElemType data)
 {
-	BSTNode *best = Search(tree, data);
-	if(best->left != NULL && best->left->data == data)
-		best = best->left;	
-	else if(best->right != NULL && best->rigt->data == data)
-		best = best->rigt;
-	else if(best->data == data)
-		best = best;	
-	else best = NULL;
-	
-	if(best != NULL)
+	BSTNode *p = Search(tree, data);
+	if(tree == p)
 	{
-		if( p->pare->left == p )
-		{
-			if( p->rigt != NULL  )
-			{
-				p->rigt->pare = p->pare;
-				p->pare->left = p->rigt;
+		//TODO
+	}else
+	{
 
-				p->left->pare = p->rigt;
-				
-			}
-		}
 	}
 }
 
-int ds[10][10];
-void ShowPrefix(BSTree *tree)
+
+void ShowInfix(BSTree *tree){}
+void ShowPostfix(BSTree *tree){}
+
+static BSTNode *ds[10][10] ={NULL};
+void ProductTree(BSTree *tree)
 {
 	static int i=-1, j=-1;
 	if(tree != NULL)
 	{
 		i++;
-		ShowPrefix(tree->left);
+		ProductTree(tree->left);
 		j++;
-		ds[i][j] = tree->data;
+		ds[i][j] = tree;
 		i--;
-		ShowPrefix(tree->rigt); 
+		ProductTree(tree->rigt); 
 		j--;
 	}
 }
-void ShowInfix(BSTree *tree){}
-void ShowPostfix(BSTree *tree){}
-void Show(BSTree *tree)
+void PrintTree(BSTNode *dist[10][10])
 {
 
-	for(int i =0; i < 10; i++)
-	{
-		for(int j = 0; j < 10; j++)
-		{
-			ds[i][j] = -1;
-		}
-	}
-	/*
-	Queue q;
-	int i=0, j = 0;
-	BSTNode *old = NULL;
-	InitQueue(&q);
-	Entry(&q, (qlm_t)tree);
-	while(!q.isEmpty)
-	{
-		BSTNode *p = (BSTNode *)Out(&q);
-		if(p->pare == NULL)    //root
-		{
-			ds[0][0] = p->data;
-		}
-		else if( p->pare == old )
-		{
-			ds[i][++j] = p->data;
-		}
-		else
-		{
-			j=0;
-			ds[++i][j] = p->data;
-			old = p->pare;
-		}
-		if(p->left != NULL) Entry(&q, (qlm_t)p->left);
-		if(p->rigt != NULL) Entry(&q, (qlm_t)p->rigt);
-	}*/
-
-	ShowPrefix(tree);
-	/*
-	for(int i =0; i <= 9; i++)
-	{
-		for(int j = 0; j <= i; j++)
-		{
-			if(ds[i-j][j] == -1) printf("    ");
-			else printf(" %2d ", ds[i-j][j]);
-		}
-		printf("\r\n");
-	}*/
-	for(int i =0; i <= 9; i++)
+	for(int i =0; i <= 5; i++)
 	{
 		for(int j = 0; j <= 9; j++)
 		{
-			if(ds[i][j] == -1) printf("     ");
-			else printf("%-2d%s", ds[i][j], \
-				(ds[i][j+1] != -1) ? "---": "   ");
+			if(ds[i][j] == NULL) printf("     ");
+			else printf("%-2d%s", dist[i][j]->data, \
+				(dist[i][j+1] != NULL) ? "---": "   ");
 		}
 		printf("\r\n");
 		for(int j = 0; i<9 && j <= 9; j++)
 		{
-			if(ds[i+1][j] == -1) 
+			if(dist[i+1][j] == NULL) 
 				printf("     ");
-			else if(ds[i][j] != -1) 
+			else if(dist[i][j] != NULL) 
 				printf("|    ");
 		}
 		printf("\r\n");
 	}
+}
+
+void Change(BSTree *tree)
+{
+	ProductTree(tree);
+	PrintTree(ds);
+	//rotate -90 angle	
+	BSTNode *ds1[10][10] = {NULL};
+	for(int i = 0; i < 10; i++)
+	{
+		for(int j = 0; j < 10; j++)
+		{
+			ds1[j][9-i] = ds[i][j];
+		}
+	}
+	for(int i =0; i < 10; i++)
+	{
+		for(int j = 0; j < 10; j++)
+		{
+			if(ds1[i][j] != NULL)
+				printf(" %-2d", ds1[i][j]->data);
+			else printf(" - ");
+		}printf("\r\n");
+	}	
+	printf("\r\n");
+	//rotate 45 angle
+	BSTNode *ds2[10][21] = {NULL};
+	for(int i = 0; i < 10; i++)
+	{
+		for(int j = 0; j < 10; j++)
+		{
+			ds2[j][10-i+j] =  ds1[j][9-i];
+		}
+	}
+	for(int i =0; i < 10; i++)
+	{
+		for(int j = 0; j < 21; j++)
+		{
+			if(ds2[i][j] != NULL)
+				printf(" %-2d", ds2[i][j]->data);
+			else printf(" - ");
+		}printf("\r\n");
+	}
+	
+	printf("\r\n");
+	//search
+	BSTNode *ds3[21][21] = {NULL};
+	for(int i = 0; i < 10; i++)
+	{
+		for(int j = 0; j < 10; j++)
+		{
+			ds3[10-i+j][i+j] = ds2[j][i+j];
+		}
+	}
+	for(int i = 0; i < 10; i++)
+		ds3[i][10+i] =  ds2[i][10+i];
+	for(int i =0; i < 21; i++)
+	{
+		for(int j = 0; j < 21; j++)
+		{
+			if(ds3[i][j] != NULL)
+				printf(" %-2d", ds3[i][j]->data);
+			else printf(" - ");
+		}printf("\r\n");
+	}
+		printf("\r\n");
+}
+void ShowTree(BSTree *tree)
+{
+	for(int i =0; i < 10; i++)
+	{
+		for(int j = 0; j < 10; j++)
+		{
+			ds[i][j] = NULL;
+		}
+	}
+	ProductTree(tree);
+		printf("\r\n");
 }

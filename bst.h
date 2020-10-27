@@ -21,5 +21,5 @@ extern void ShowPrefix(BSTree *);
 extern void ShowInfix(BSTree *);
 extern void ShowPostfix(BSTree *);
 
-extern void Show(BSTree *);
+extern void ShowTree(BSTree *);
 #endif
