@@ -6,8 +6,8 @@ int main(void)
 	BSTree tree;
 	InitBST(&tree);
 	BSTNode p[20];
-	int tmp[20] = {2, 3, 22, 9, 7, 5, 6, 1, 70, 50,\
-				   45, 4, 44, 43, 42, 45, 53, 52, 51, 25};
+	int tmp[20] = {1, 2, 3, 4, 50, 6, 7, 8, 59, 60, 11,\
+				   63, 62, 14, 70, 16, 17, 18, 80, 20};
 	for(int i = 0; i < 20; i++)
 	{
 		InitBSTNode(&p[i], tmp[i]);
