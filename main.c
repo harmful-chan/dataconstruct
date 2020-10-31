@@ -2,12 +2,11 @@
 #include <stdlib.h>
 
 int main(void)
-{
+{		
 	BSTree tree;
 	InitBST(&tree);
 	BSTNode p[20];
-	int tmp[20] = {1, 2, 3, 4, 50, 6, 7, 8, 59, 60, 11,\
-				   63, 62, 14, 70, 16, 17, 18, 80, 20};
+	int tmp[20] = {10, 5, 4, 3, 8, 9, 10, 60,  20, 19 ,31, 32, 30, 29, 33, 31, 40, 50, 60, 70, 80, 90};
 	for(int i = 0; i < 20; i++)
 	{
 		InitBSTNode(&p[i], tmp[i]);
