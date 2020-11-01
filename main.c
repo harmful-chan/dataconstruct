@@ -1,18 +1,43 @@
 #include "bst.h"
 #include <stdlib.h>
-
+#include <stdio.h>
+#include <string.h>
+#include "typedef.h"
 int main(void)
 {		
 	BSTree tree;
 	InitBST(&tree);
-	BSTNode p[20];
-	int tmp[20] = {51, 5, 2, 3, 4, 34, 33, 32, 50, 60, 59, 70, 75, 71, 8,  9, 10 ,11, 12, 13};
-	for(int i = 0; i < 20; i++)
+	int tmp[] = {10, 20, 30, 40, 50, 5, 3, 4, 15, 13};
+
+	while(1)
 	{
-		InitBSTNode(&p[i], tmp[i]);
-		InsertBSTNode(&tree, &p[i]);
+		char c= '\0';
+		system("clear");
+		ShowTree(&tree);
+		printf("# script > ");
+		scanf("%c", &c);
+		printf("\r\n");
+
+		switch(c)
+		{
+			case 'i': {
+				int d = -1;	
+				scanf("%d", &d);
+				BSTNode *p = InitBSTNode((BSTNode *)malloc(sizeof(BSTNode)), d);
+				InsertBSTNode(&tree, p);
+			}break;
+			case 'c' : {
+				FOR(i, 10){
+					BSTNode *p = InitBSTNode((BSTNode *)malloc(sizeof(BSTNode)), tmp[i]);
+					InsertBSTNode(&tree, p);
+				}
+			}break;
+			case 'n' : {
+			}break;
+			default : break;
+		}
 	}
-	ShowTree(&tree);
+	
 	
 	return 0;
 }

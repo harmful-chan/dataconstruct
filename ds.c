@@ -1,6 +1,7 @@
 #include "ds.h"
 #include <stddef.h>
 #include <stdio.h>
+#include "typedef.h"
 #define NotNull(s ,r) (s ? s->r : NULL)
 
 static DSNode ds[21][21] ={NULL};
@@ -12,20 +13,50 @@ static void CopyDSArray(DSNode (*src)[21][21], DSNode (*dst)[21][21])
         (*dst)[i][j] = (*src)[i][j];
 }
 
-static void ShiftLine(DSNode (*d)[21][21], int start, int end)
+static void ShiftLineVertical(DSNode (*d)[21][21], int start, int end, int col)
 {
     int offsize = end - start;
-
     // row index of '[s ~ 19][0~20]' move down line one.
-	for(int i = 0; i < 21-offsize; i++)
-	for(int j = 0; j < 21; j++)
+	for(int i = 0; i < 21-start-offsize; i++)
+	for(int j = col; j < 21; j++)
 		(*d)[20-i][j] = (*d)[20-i-offsize][j];
 
     //row index of 's' clear.
 	for(int i = 0; i < offsize; i++) 
-    for(int j = 0; j < 21; j++)
+    for(int j = col; j < 21; j++)
 	    (*d)[start+i][j].node = NULL;
 }
+
+static int GetParentPathRigt(DSNode (*p)[21][21], int row, int col)
+{
+    if(row <= 0) return -1;
+
+    int i = row;
+    int j = col;
+    for( ; j >= 0; j--)
+    if(ds[i][j].node != NULL &&
+        ds[i-1][j].node != NULL &&
+        ds[i][j].node->pare == ds[i-1][j].node)
+        break;
+
+    return j;
+}
+
+static int GetParentPathLeft(DSNode (*p)[21][21], int row, int col)
+{
+    if(col < 0 || row <= 0) return -1;
+
+    int i = row;
+    int j = col;
+    for( ; i > 0; i--)
+    if(ds[i][j].node != NULL &&
+        ds[i-1][j].node != NULL &&
+        ds[i][j].node->pare == ds[i-1][j].node)
+        break;
+
+    return j;
+}
+
 static void FreshTreeDS(BSTree *tree)
 {
 	static int i=-1, j=-1;
@@ -35,17 +66,28 @@ static void FreshTreeDS(BSTree *tree)
 		FreshTreeDS(tree->left);
 		j++;
 
-        for(int l = 0; l < i; l++)
-        if(ds[i-l][j].node != NULL){
-            ShiftLine(&ds, i-l, i+1);
-            break;
-        } 
+        FOR(l ,i){
+            if(ds[i-l][j].node != NULL){
+                int m = GetParentPathRigt(&ds, i-l, j);
+                //int n = GetParentPathLeft(&ds, i-l, m);
+                //printf("-%d %d-\r\n", m, n);
+                ShiftLineVertical(&ds, i-l, i+1, (m >= 0) ? m : 0);
+                break;
+            } 
+        }
         ds[i][j].node = tree;
 		i--; 
 		FreshTreeDS(tree->rigt);
 		j--;
 	}
 }
+static void CleanTreeDS(DSNode (*p)[21][21])
+{
+    DSNode d[21][21] = {{NULL, 0, 0 ,0}};
+	
+    CopyDSArray(&d,p);    
+}
+
 static void RepairRela(DSNode (*p)[21][21])
 {
     //fill the gap.
@@ -189,12 +231,11 @@ static void PrintDSNodeArray(DSNode (*d)[21][21], int mode, int row, int col)
         
     }
 }
-
 void *ProductTreePicture(BSTree *tree)
 {
-
+    CleanTreeDS(&ds);
 	FreshTreeDS(tree);    
-	//PrintDSNodeArray(&ds, 0, 15, 21);   
+	// PrintDSNodeArray(&ds, 0, 15, 21);   
     RepairRela(&ds);    
 	//PrintDSNodeArray(&ds, 0, 15, 21);
     RotateN90(&ds);
