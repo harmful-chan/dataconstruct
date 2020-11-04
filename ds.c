@@ -4,8 +4,6 @@
 #include "typedef.h"
 #define NotNull(s ,r) (s ? s->r : NULL)
 
-static DSNode ds[21][21] ={NULL};
-
 static void CopyDSArray(DSNode (*src)[21][21], DSNode (*dst)[21][21])
 {
     for(int i = 0; i < 21; i++)
@@ -34,50 +32,33 @@ static int GetParentPathRigt(DSNode (*p)[21][21], int row, int col)
     int i = row;
     int j = col;
     for( ; j >= 0; j--)
-    if(ds[i][j].node != NULL &&
-        ds[i-1][j].node != NULL &&
-        ds[i][j].node->pare == ds[i-1][j].node)
+    if((*p)[i][j].node != NULL &&
+        (*p)[i-1][j].node != NULL &&
+        (*p)[i][j].node->pare == (*p)[i-1][j].node)
         break;
 
     return j;
 }
 
-static int GetParentPathLeft(DSNode (*p)[21][21], int row, int col)
-{
-    if(col < 0 || row <= 0) return -1;
-
-    int i = row;
-    int j = col;
-    for( ; i > 0; i--)
-    if(ds[i][j].node != NULL &&
-        ds[i-1][j].node != NULL &&
-        ds[i][j].node->pare == ds[i-1][j].node)
-        break;
-
-    return j;
-}
-
-static void FreshTreeDS(BSTree *tree)
+static void FreshTreeDS(BSTNode *head, DSNode (*p)[21][21])
 {
 	static int i=-1, j=-1;
-	if(tree != NULL)
+	if(head != NULL)
 	{
 		i++;
-		FreshTreeDS(tree->left);
+		FreshTreeDS(head->left, p);
 		j++;
 
         FOR(l ,i){
-            if(ds[i-l][j].node != NULL){
-                int m = GetParentPathRigt(&ds, i-l, j);
-                //int n = GetParentPathLeft(&ds, i-l, m);
-                //printf("-%d %d-\r\n", m, n);
-                ShiftLineVertical(&ds, i-l, i+1, (m >= 0) ? m : 0);
+            if((*p)[i-l][j].node != NULL){
+                int m = GetParentPathRigt(p, i-l, j);
+                ShiftLineVertical(p, i-l, i+1, (m >= 0) ? m : 0);
                 break;
             } 
         }
-        ds[i][j].node = tree;
+        (*p)[i][j].node = head;
 		i--; 
-		FreshTreeDS(tree->rigt);
+		FreshTreeDS(head->rigt, p);
 		j--;
 	}
 }
@@ -231,10 +212,18 @@ static void PrintDSNodeArray(DSNode (*d)[21][21], int mode, int row, int col)
         
     }
 }
-void *ProductTreePicture(BSTree *tree)
+void *ProductTreePicture(BSTNode *head)
 {
+    
+    
+    if(head == NULL) 
+    {
+        printf("\r\n");
+        return NULL;
+    }
+    DSNode ds[21][21];
     CleanTreeDS(&ds);
-	FreshTreeDS(tree);    
+	FreshTreeDS(head, &ds);    
 	// PrintDSNodeArray(&ds, 0, 15, 21);   
     RepairRela(&ds);    
 	//PrintDSNodeArray(&ds, 0, 15, 21);

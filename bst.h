@@ -9,7 +9,16 @@ typedef struct Node
 	struct Node *left;
 	struct Node *rigt;
 	struct Node *pare;
-}BSTNode, BSTree;
+}BSTNode;
+
+typedef struct Tree
+{
+	int layout;
+	struct Node *head;
+}BSTree;
+
+
+
 
 extern BSTree *InitBST(BSTree *);
 extern BSTNode *InitBSTNode(BSTNode *, ElemType);

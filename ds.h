@@ -9,5 +9,5 @@ typedef struct dsn_t
     unsigned char havePare, haveLeft, haveRigt;
 }DSNode;
 
-extern void *ProductTreePicture(BSTree *tree);
+extern void *ProductTreePicture(BSTNode *head);
 #endif

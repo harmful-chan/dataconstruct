@@ -32,7 +32,13 @@ int main(void)
 					InsertBSTNode(&tree, p);
 				}
 			}break;
-			case 'n' : {
+			case 'd' : {
+				int d = -1;	
+				scanf("%d", &d);
+				DeleteBSTNode(&tree, d);
+			}break;
+			case 'q' : {
+				exit(0);
 			}break;
 			default : break;
 		}
