@@ -24,7 +24,7 @@ BSTNode *SearchParent(BSTNode *head, ElemType data)
 		BSTNode *ret = NULL;
 		if(p->data < data) ret = SearchParent(p->rigt, data);
 		else if(p->data > data) ret = SearchParent(p->left, data);
-		
+		else if(p->data == data) return NULL;		
 		return ret ? ret : p;
 	}
 	return p;
@@ -42,114 +42,110 @@ BSTNode *InitBSTNode(BSTNode *node, ElemType data)
 	node->data = data;
 	node->left = NULL;
 	node->rigt = NULL;
-	node->pare = NULL;
 	return node;
 }
 
 BSTNode *InsertBSTNode(BSTree *tree, BSTNode *node)
 {
-	if(tree->head == NULL)
+	if( Search(tree->head, node->data) == NULL )
 	{
-		tree->head = node;
-		tree->layout = 1;
-		return node;
-	}
+		if(tree->head == NULL)
+		{
+			tree->head = node;
+			tree->layout = 1;
+			return node;
+		}
 
-	BSTNode *p = SearchParent(tree->head, node->data);    //find node
-	node->pare = p;
-	if( sureLeft(p, node) )    //left
-	{
-		node->left = p->left;
-		if(p->left != NULL) p->left->pare = node;
-		p->left = node;
+		BSTNode *p = SearchParent(tree->head, node->data);    //find node
+		if( sureLeft(p, node) )    //left
+		{
+			node->left = p->left;
+			p->left = node;
+		}
+		else if( sureRigt(p, node) )
+		{
+			node->rigt = p->rigt;
+			p->rigt = node;
+		}
+		tree->layout++;
 	}
-	else if( sureRigt(p, node) )
-	{
-		node->rigt = p->rigt;
-		if(p->rigt != NULL) p->rigt->pare = node;
-		p->rigt = node;
-	}
-	tree->layout++;
 }
 
-int DeleteBSTNode(BSTree *tree, ElemType data)
+void DeleteBSTNode(BSTree *tree, ElemType data)
 {
 	BSTNode *p = Search(tree->head, data);
 	if(p != NULL)
 	{
-		if(p->pare == NULL){
-			if( haveLeftChild(p) && haveRigtChild(p) )
-			{
-				BSTNode *pl = p->rigt;
-				while( pl->left != NULL ) pl = pl->left;
-				if( haveRigtChild(pl) ) pl->rigt->pare = pl->pare;
-				// if(pl->pare != NULL && pl->pare->rigt == pl) pl->pare->rigt = pl->rigt;
-				// if(pl->pare != NULL && pl->pare->left == pl) pl->pare->left = pl->rigt;
-				if( isRigtChild(pl) ) pl->pare->rigt = pl->rigt;
-				if( isLeftChild(pl) ) pl->pare->left = pl->rigt;
-				p->data = pl->data;
-				p = pl;
-			}
-			else if(haveLeftChild(p)) tree->head = p->left;
-			else if(haveRigtChild(p)) tree->head = p->rigt;
-		}
-		else
+		if(tree->head->data == data)    // root node.
 		{
-			if( haveLeftChild(p) && haveRigtChild(p))
+			if(haveLeftChild(p) && !haveRigtChild(p)) tree->head = p->left;
+			else if(haveRigtChild(p) && !haveLeftChild(p)) tree->head = p->rigt;
+		}
+		else    // not root node.
+		{
+			BSTNode * pare = SearchParent(tree->head, p->data);
+			if(haveLeftChild(p) && !haveRigtChild(p))
 			{
-				BSTNode *pl = p->rigt;
-				// while( pl->left != NULL) pl = pl->left;
-				// if(pl->rigt != NULL) pl->rigt->pare = pl->pare;
-				// if(pl->pare != NULL && pl->pare->rigt == pl) pl->pare->rigt = pl->rigt;
-				// if(pl->pare != NULL && pl->pare->left == pl) pl->pare->left = pl->rigt;
-				while( haveLeftChild(pl) ) pl = pl->left;
-				if( haveRigtChild(pl) ) pl->rigt->pare = pl->pare;
-				if( isRigtChild(pl) ) pl->pare->rigt = pl->rigt;
-				if( isLeftChild(pl) ) pl->pare->left = pl->rigt;
-
-				pl->pare = p->pare;
-				pl->left = p->left;
-				pl->rigt = p->rigt;
-
-				// if(p->pare->rigt == p) p->pare->rigt = pl;
-				// if(p->pare->left == p) p->pare->left = pl;
-				// if(p->left != NULL) p->left->pare = pl;
-				// if(p->rigt != NULL) p->rigt->pare = pl;
-				if(isRigtChild(p)) p->pare->rigt = pl;
-				if(isLeftChild(p)) p->pare->left = pl;
-				if(haveLeftChild(p)) p->left->pare = pl;
-				if(haveRigtChild(p)) p->rigt->pare = pl;
-
+				if(isLeftChild(pare, p))
+					pare->left = p->left;
+				else
+					pare->rigt = p->left;
 			}
-			else if(p->left != NULL)
+			else if(haveRigtChild(p) && !haveLeftChild(p))
 			{
-				p->left->pare = p->pare;
-				// if(p->pare->rigt == p) p->pare->rigt = p->left;
-				// if(p->pare->left == p) p->pare->left = p->left;
-				if(isRigtChild(p)) p->pare->rigt = p->left;
-				if(isLeftChild(p)) p->pare->left = p->left;
+				if(isLeftChild(pare, p))	
+					pare->left = p->rigt;
+				else	
+					pare->rigt = p->rigt;
 			}
-			else if(p->rigt != NULL)
+			else if(!haveRigtChild(p) && !haveLeftChild(p)){
+				if(isLeftChild(pare, p))	
+					pare->left = NULL;
+				else	
+					pare->rigt = NULL;
+			}
+		}
+		if( haveLeftChild(p) && haveRigtChild(p) )    // have two child.
+		{
+			//quary apposite node.
+			BSTNode *pl = p->rigt;
+			while( pl->left != NULL && pl->left->left != NULL ) 
+				pl = pl->left;
+			BSTNode *pls = pl->left;    //apposite node. 
+			if(pls == NULL)    //
 			{
-				p->rigt->pare = p->pare;
-				// if(p->pare->rigt == p) p->pare->rigt = p->rigt;
-				// if(p->pare->left == p) p->pare->left = p->rigt;
-				if(isRigtChild(p)) p->pare->rigt = p->rigt;
-				if(isLeftChild(p)) p->pare->left = p->rigt;
-
+				p->rigt = pl->rigt;
+				p->data = pl->data;
+				p=pl;
 			}
-			else{
-				if(isRigtChild(p)) p->pare->rigt = NULL;
-				if(isLeftChild(p)) p->pare->left = NULL;
+			else
+			{
+				pl->left = pls->rigt;
+				p->data = pls->data;
+				p=pls;
 			}
 		}
 		free(p);
 		tree->layout--;
 	}
-	return 1;
 }
 
-void ShowTree(BSTree *tree)
+static void ReleaseBSTNode(BSTNode * node)
+{
+	if(node != NULL)
+	{
+		ReleaseBSTNode(node->left);
+		ReleaseBSTNode(node->rigt);
+		free(node);
+	}
+}
+
+void ReleaseBSTree(BSTree *tree)
+{
+	ReleaseBSTNode(tree->head);
+}
+
+void ShowBSTree(BSTree *tree)
 {
 	ProductTreePicture(tree->head);
 }

@@ -5,9 +5,10 @@
 #define max(a, b) (a > b ? a : b)
 
 static enum WHIRL_MODE AdjustMode(AVLNode *node);
-static int Whirl(enum WHIRL_MODE mode, AVLNode *pa, AVLNode *pb, AVLNode *pc);
-static int AdjustBalance(AVLNode *node);
-static int Traverse(AVLNode *node);
+static int Whirl(enum WHIRL_MODE mode, AVLNode *pare, AVLNode *pa, AVLNode *pb, AVLNode *pc);
+static int Traverse(AVLNode *pare, AVLNode *node);
+static int AdjustBalance(AVLNode *pare, AVLNode *node);
+static AVLNode *AdjustTree(AVLTree *tree);
 
 AVLTree *InitAVLTree(AVLTree *tree)
 {
@@ -24,24 +25,34 @@ AVLNode *InitAVLNode(AVLNode *node, ElemType data)
 AVLNode *InsertAVLNode(AVLTree *tree, AVLNode *node)
 {
     AVLNode *p = (AVLNode *)InsertBSTNode((BSTree *)tree, (BSTNode *)node);
-    Traverse(tree->head);
-
-    // change parent point to 'tree->head'   
-    if(tree->head->pare != NULL)    
-        tree->head = tree->head->pare;
+    AdjustTree(tree);
 }
-int DeleteAVLNode(AVLTree *tree, ElemType data)
+void DeleteAVLNode(AVLTree *tree, ElemType data)
 {
-    
+    DeleteBSTNode((BSTree *)tree, data);
+    AdjustTree(tree);
 }
+void ReleaseAVLTree(AVLTree *tree)
+{
+	ReleaseBSTree((BSTree *)tree);
+}
+void ShowAVLTree(AVLTree *tree)
+{
+    ShowBSTree((BSTree *)tree);
+}
+
 static enum WHIRL_MODE AdjustMode(AVLNode *node)
 {
     if( haveLeftChild(node) && haveRigtChild(node) )    //have two child.
     {
-        if( haveLeftChild(node->left) || haveRigtChild(node->left) )
-            return WHIRL_MODE_LL;
-        else 
-            return WHIRL_MODE_RR;
+        if( haveLeftChild(node->left->rigt) || haveRigtChild(node->left->rigt) )
+            return WHIRL_MODE_LR;
+        else if( haveLeftChild(node->rigt->left) || haveRigtChild(node->rigt->left) ) 
+            return WHIRL_MODE_RL;
+        else if( haveLeftChild(node->left->left) || haveRigtChild(node->left->left) )
+            return WHIRL_MODE_LL; 
+        else //if( haveLeftChild(node->rigt->right) || haveRigtChild(node->rigt->rigt) )
+            return WHIRL_MODE_RR; 
     }
     else    //one child
     {
@@ -57,75 +68,94 @@ static enum WHIRL_MODE AdjustMode(AVLNode *node)
         }
     }
 }
-static int Whirl(enum WHIRL_MODE mode, AVLNode *pa, AVLNode *pb, AVLNode *pc)
+static int Whirl(enum WHIRL_MODE mode, AVLNode *pare, AVLNode *pa, AVLNode *pb, AVLNode *pc)
 {
     switch(mode)
     {
         case WHIRL_MODE_CP:{  
-            if( isLeftChild(pa) ) pa->pare->left = pb;
-            if( isRigtChild(pa) ) pa->pare->rigt = pb;
+            if( isLeftChild(pare, pa) ) pare->left = pb;
+            if( isRigtChild(pare, pa) ) pare->rigt = pb;
             return 0;
         }break;
         case WHIRL_MODE_LL :{    
-            if( pa->pare != NULL ) 
-                Whirl(WHIRL_MODE_CP, pa, pb, pc);
+            Whirl(WHIRL_MODE_CP, pare, pa, pb, pc);
             pa->left = pb->rigt;
-            pb->pare = pa->pare;   
-            pa->pare = pb;  
             pb->rigt = pa;    
         }break;
         case WHIRL_MODE_RR:{       
-            if( pa->pare != NULL ) 
-                Whirl(WHIRL_MODE_CP, pa, pb, pc);
+            Whirl(WHIRL_MODE_CP, pare, pa, pb, pc);
             pa->rigt = pb->left;
-            pb->pare = pa->pare; 
-            pa->pare = pb;  
             pb->left = pa;   
         }break;
-        case WHIRL_MODE_LR:{   
-            Whirl(WHIRL_MODE_RR, pb, pc, NULL);
-            if( pa->pare != NULL ) 
-                Whirl(WHIRL_MODE_CP, pa, pb, pc);
-            Whirl(WHIRL_MODE_LL, pa, pc, pb);
+        case WHIRL_MODE_LR:{
+            Whirl(WHIRL_MODE_RR, pa, pb, pc, NULL);
+            Whirl(WHIRL_MODE_LL, pare, pa, pc, pb);
         }break;
         case WHIRL_MODE_RL:{    
-            Whirl(WHIRL_MODE_LL, pb, pc, NULL);
-            if( pa->pare != NULL ) 
-                Whirl(WHIRL_MODE_CP, pa, pb, pc);
-            Whirl(WHIRL_MODE_RR, pa, pc, pb);
+            Whirl(WHIRL_MODE_LL, pa, pb, pc, NULL);
+            Whirl(WHIRL_MODE_RR, pare, pa, pc, pb);
         }break;
         default : break;
     }
-    return Traverse(pa);
+    return 0;//Traverse(pare, pa);
 }
-static int AdjustBalance(AVLNode *node)
+static int AdjustBalance(AVLNode *pare, AVLNode *node)
 {
     int ret = 0;
     enum WHIRL_MODE type = AdjustMode(node);
     switch(type)
     {
-        case WHIRL_MODE_LL : ret = Whirl(type, node, node->left, node->left->left); break;
-        case WHIRL_MODE_RR : ret = Whirl(type, node, node->rigt, node->rigt->rigt); break;
-        case WHIRL_MODE_LR : ret = Whirl(type, node, node->left, node->left->rigt); break;
-        case WHIRL_MODE_RL : ret = Whirl(type, node, node->rigt, node->rigt->left); break;
+        case WHIRL_MODE_LL : ret = Whirl(type, pare, node, node->left, node->left->left); break;
+        case WHIRL_MODE_RR : ret = Whirl(type, pare, node, node->rigt, node->rigt->rigt); break;
+        case WHIRL_MODE_LR : ret = Whirl(type, pare, node, node->left, node->left->rigt); break;
+        case WHIRL_MODE_RL : ret = Whirl(type, pare, node, node->rigt, node->rigt->left); break;
         default : break;
     }
     return ret;
 }
-static int Traverse(AVLNode *node)
+static int Traverse(AVLNode *pare, AVLNode *node)
 {
     if(node != NULL)
     {
-        int a = Traverse(node->left);
-        int b = Traverse(node->rigt);
+        int a = Traverse(node, node->left);
+        int b = Traverse(node, node->rigt);
         
         // not balance 
         if(abs(a - b) >= 2)
-            if(a > b) a = AdjustBalance(node);
-            else b = AdjustBalance(node);
+            if(a > b) a = AdjustBalance(pare, node);
+            else b = AdjustBalance(pare, node);
 
         node->height = a - b  ;
         return max(a, b) + 1;
     }
     return 0;
 }
+
+static AVLNode *AdjustTree(AVLTree *tree)
+{
+    AVLNode *root = tree->head;
+    if(haveLeftChild(root) && haveRigtChild(root))
+    {
+        AVLNode *rl = root->left;
+        AVLNode *rlr = root->left->rigt;
+        AVLNode *rr = root->rigt;
+        AVLNode *rrl = root->rigt->left;
+        Traverse(NULL, root);
+        if(isRigtChild(rl, root)) tree->head = rl;    // LL
+        else if(isRigtChild(rlr, root)) tree->head = rlr;    // LR
+        else if(isLeftChild(rr, root)) tree->head = rr;    //RR
+        else if(isLeftChild(rrl, root)) tree->head = rrl;    //RL
+    }else if(haveLeftChild(root))
+    {
+        AVLNode *rl = root->left;
+        Traverse(NULL, root);
+        if(isRigtChild(rl, root)) tree->head = rl;
+    }
+    else
+    {
+        AVLNode *rr = root->rigt;
+        Traverse(NULL, root);
+        if(isLeftChild(rr, root)) tree->head = rr;
+    }
+}
+

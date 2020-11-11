@@ -1,8 +1,11 @@
 #ifndef _BST_H_
 #define _BST_H_
 
-#define isLeftChild(child) ( child != NULL && child->pare != NULL && child->pare->left == child )
-#define isRigtChild(child) ( child != NULL && child->pare != NULL && child->pare->rigt == child ) 
+
+#define isLeftChild(pare, p) ( pare != NULL && pare->left != NULL && pare->left == p )
+#define isRigtChild(pare, p) ( pare != NULL && pare->rigt != NULL && pare->rigt == p ) 
+
+
 
 #define haveLeftChild(p) ( p!=NULL && p->left != NULL)
 #define haveRigtChild(p) ( p!=NULL && p->rigt != NULL)
@@ -16,7 +19,6 @@ typedef struct bst_node
 	ElemType data;
 	struct bst_node *left;
 	struct bst_node *rigt;
-	struct bst_node *pare;
 }BSTNode;
 
 typedef struct bst_tree
@@ -30,14 +32,14 @@ typedef struct bst_tree
 
 extern BSTree *InitBSTree(BSTree *);
 extern BSTNode *InitBSTNode(BSTNode *, ElemType);
-
 extern BSTNode *InsertBSTNode(BSTree *, BSTNode *);
-extern int DeleteBSTNode(BSTree *, ElemType);
+extern void DeleteBSTNode(BSTree *, ElemType);
+extern void ReleaseBSTree(BSTree *);
+extern void ShowBSTree(BSTree *);
 
 BSTNode *Search(BSTNode *, ElemType);
 BSTNode *SearchParent(BSTNode *, ElemType);
 
-extern void ShowTree(BSTree *);
 
 
 #endif

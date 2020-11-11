@@ -2,12 +2,19 @@
 #define _DS_H_
 
 #include "bst.h"
-
-typedef struct dsn_t
+typedef struct ds_elm_t
 {
-    BSTNode *node;
+	ElemType data;
+	struct ds_elm_t *left;
+	struct ds_elm_t *rigt;
+	struct ds_elm_t *pare;
+}DSElmNode;
+
+typedef struct ds_node_t
+{
+    DSElmNode *node;
     unsigned char havePare, haveLeft, haveRigt;
 }DSNode;
 
-extern void *ProductTreePicture(BSTNode *head);
+extern void *ProductTreePicture(void *);
 #endif

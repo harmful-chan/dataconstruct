@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include "typedef.h"
+#include <stdlib.h>
 #define NotNull(s ,r) (s ? s->r : NULL)
 
 static void CopyDSArray(DSNode (*src)[21][21], DSNode (*dst)[21][21])
@@ -40,7 +41,7 @@ static int GetParentPathRigt(DSNode (*p)[21][21], int row, int col)
     return j;
 }
 
-static void FreshTreeDS(BSTNode *head, DSNode (*p)[21][21])
+static void FreshTreeDS(DSElmNode *head, DSNode (*p)[21][21])
 {
 	static int i=-1, j=-1;
 	if(head != NULL)
@@ -101,9 +102,9 @@ static void RepairRela(DSNode (*p)[21][21])
     for(int i = 0 ; i < 21; i++)
 	for(int j = 0 ; j < 21; j++)
     {
-        BSTNode *q  = (*p)[i][j].node;
-        BSTNode *qr = (*p)[i][j+1].node;
-        BSTNode *ql = (*p)[i+1][j].node;
+        DSElmNode *q  = (*p)[i][j].node;
+        DSElmNode *qr = (*p)[i][j+1].node;
+        DSElmNode *ql = (*p)[i+1][j].node;
 
         (*p)[i][j].haveRigt = q ? qr ? q->rigt == qr || q == qr ? 1 : 0 : 0 : 0;
         (*p)[i][j].haveLeft = q ? ql ? q->left == ql || q == ql ? 1 : 0 : 0 : 0;
@@ -212,18 +213,44 @@ static void PrintDSNodeArray(DSNode (*d)[21][21], int mode, int row, int col)
         
     }
 }
-void *ProductTreePicture(BSTNode *head)
+
+static DSElmNode *CloneTree(const void *sn, DSElmNode *dn)
 {
-    
-    
-    if(head == NULL) 
+    if(sn != NULL)
+    {   DSElmNode *s = (DSElmNode *)sn;
+        DSElmNode *p = (DSElmNode *)malloc(sizeof(DSElmNode));
+        p->data = s->data;
+        p->pare = dn;
+        p->left = CloneTree(s->left, p);
+        p->rigt = CloneTree(s->rigt, p);
+        return p;
+    }
+    return NULL;
+}
+
+static void ReleaseCloneTree(DSElmNode *p)
+{
+    if(p != NULL)
+    {
+        ReleaseCloneTree(p->left);
+        ReleaseCloneTree(p->rigt);
+        free(p);
+    }
+}
+
+void *ProductTreePicture(void *root)
+{
+        
+    if(root == NULL) 
     {
         printf("\r\n");
         return NULL;
     }
+    DSElmNode *elm_root = CloneTree(root, NULL);
+
     DSNode ds[21][21];
     CleanTreeDS(&ds);
-	FreshTreeDS(head, &ds);    
+	FreshTreeDS(elm_root, &ds);    
 	// PrintDSNodeArray(&ds, 0, 15, 21);   
     RepairRela(&ds);    
 	//PrintDSNodeArray(&ds, 0, 15, 21);
@@ -232,7 +259,9 @@ void *ProductTreePicture(BSTNode *head)
 	Rotate45(&ds);
     // PrintDSNodeArray(&ds, 0, 10, 21);
 	VerticalStretch(&ds);
-    PrintDSNodeArray(&ds, 3, 16, 21);    
+    PrintDSNodeArray(&ds, 3, 16, 21);
+
+    ReleaseCloneTree(elm_root);
 	return NULL;
 }
 

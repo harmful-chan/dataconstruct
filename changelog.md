@@ -35,4 +35,24 @@
 #### 其他
 添加include文件夹存放头文件
 
+##### 2020.11.11 15.22 pm harmful-chan
+#### main.c
+独立显示函数'Show()'， 用枚举类型区分不同树的类型。</br>
+增加退出时释放树节点空间，树头用全局变量保存。</br>
+#### bst
+增加 'ReleaseBSTree()'</br>
+修改 把'ShowTree()' 改为 'ShowBSTree()'</br>
+修改 把节点结构体 'pare' 指针删除，改成单向树</br>
+修改 把'SearchPare()' 若找不到节点则返回最后一个节点，若找到则返回它的父节点。</br>
+修改 'DeleteBSTNode()'函数实现方式改进。</br>
+#### avl
+增加 'AdjustTree()'用于调整树平衡，会自动递归不用多次调用。</br>
+增加 'ShowAVLTree()'，'ReleaseAVLTree()'，'DeleteAVLNode()' 。</br>
+修改 'Traverse()'，'AdjustBalance()'，'Whirl()' 需要传入父指针。</br>
+修改 把节点结构体改成单向的，删除'pare'指针。</br>
+#### ds
+增加 ‘DSElmNode’结构体 用于代替需要显示的树节点</br>
+修改 实现方式变化，把单向树克隆成副本，再把副本转为双向树，再进行显示。</br>
+
+
 

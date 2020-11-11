@@ -17,7 +17,6 @@ typedef struct avl_node
 	ElemType data;
 	struct avl_node *left;
 	struct avl_node *rigt;
-	struct avl_node *pare;
     int height;
 }AVLNode;
 
@@ -32,7 +31,10 @@ typedef struct avl_tree
 extern AVLTree *InitAVLTree(AVLTree *);
 extern AVLNode *InitAVLNode(AVLNode *, ElemType);
 extern AVLNode *InsertAVLNode(AVLTree *, AVLNode *);
-extern int DeleteAVLNode(AVLTree *, ElemType);
+extern void DeleteAVLNode(AVLTree *, ElemType);
+extern void ReleaseAVLTree(AVLTree *);
+
+extern void ShowAVLTree(AVLTree *);
 
 
 #endif
