@@ -5,6 +5,17 @@
 #include "ds.h"
 
 
+static void ReleaseBSTNode(BSTNode * node)
+{
+	if(node != NULL)
+	{
+		ReleaseBSTNode(node->left);
+		ReleaseBSTNode(node->rigt);
+		free(node);
+	}
+}
+
+#pragma region Interfaces
 BSTNode *Search(BSTNode *head, ElemType data)
 {
 	BSTNode *p = head;
@@ -127,16 +138,6 @@ void DeleteBSTNode(BSTTree *tree, ElemType data)
 	}
 }
 
-static void ReleaseBSTNode(BSTNode * node)
-{
-	if(node != NULL)
-	{
-		ReleaseBSTNode(node->left);
-		ReleaseBSTNode(node->rigt);
-		free(node);
-	}
-}
-
 void ReleaseBSTTree(BSTTree *tree)
 {
 	ReleaseBSTNode(tree->head);
@@ -146,3 +147,4 @@ void ShowBSTTree(BSTTree *tree)
 {
 	ProductTreePicture(tree->head);
 }
+#pragma endregion

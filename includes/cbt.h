@@ -23,6 +23,8 @@ extern CBTNode *InsertCBTNode(CBTTree *, CBTNode *);
 extern void DeleteCBTNode(CBTTree *, ElemType);
 extern void ReleaseCBTTree(CBTTree *);
 extern void ShowCBTTree(CBTTree *);
+extern void PrintCBTNodeDetail(CBTNode *);
+
 
 CBTNode *FindCBTNode(CBTTree *, ElemType);
 

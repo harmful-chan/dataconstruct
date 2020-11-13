@@ -39,6 +39,8 @@ extern BSTNode *InsertBSTNode(BSTTree *, BSTNode *);
 extern void DeleteBSTNode(BSTTree *, ElemType);
 extern void ReleaseBSTTree(BSTTree *);
 extern void ShowBSTTree(BSTTree *);
+extern void PrintBSTNodeDetail(BSTNode *);
+
 
 BSTNode *Search(BSTNode *, ElemType);
 BSTNode *SearchParent(BSTNode *, ElemType);

@@ -3,14 +3,14 @@
 
 #include "bst.h"
 
-enum WHIRL_MODE
+typedef enum whirl_t
 {
 	WHIRL_MODE_LL = 0,   
 	WHIRL_MODE_LR,
 	WHIRL_MODE_RL,
 	WHIRL_MODE_RR,
 	WHIRL_MODE_CP = 100,
-};
+}WhirlType;
 
 typedef struct avl_node
 {
@@ -30,8 +30,8 @@ extern AVLNode *InitAVLNode(AVLNode *, ElemType);
 extern AVLNode *InsertAVLNode(AVLTree *, AVLNode *);
 extern void DeleteAVLNode(AVLTree *, ElemType);
 extern void ReleaseAVLTree(AVLTree *);
-
 extern void ShowAVLTree(AVLTree *);
+extern void PrintAVLNodeDetail(AVLNode *);
 
 
 #endif
