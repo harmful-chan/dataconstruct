@@ -30,10 +30,10 @@ BSTNode *SearchParent(BSTNode *head, ElemType data)
 	return p;
 }
 
-BSTree *InitBSTree(BSTree *tree)
+BSTTree *InitBSTTree(BSTTree *tree)
 { 
-	tree->head = NULL; 
-	tree->layout = 0;
+	tree->head = NULL; 	
+	tree->name = BST;
 	return tree;
 }
 
@@ -45,14 +45,13 @@ BSTNode *InitBSTNode(BSTNode *node, ElemType data)
 	return node;
 }
 
-BSTNode *InsertBSTNode(BSTree *tree, BSTNode *node)
+BSTNode *InsertBSTNode(BSTTree *tree, BSTNode *node)
 {
 	if( Search(tree->head, node->data) == NULL )
 	{
 		if(tree->head == NULL)
 		{
 			tree->head = node;
-			tree->layout = 1;
 			return node;
 		}
 
@@ -67,11 +66,10 @@ BSTNode *InsertBSTNode(BSTree *tree, BSTNode *node)
 			node->rigt = p->rigt;
 			p->rigt = node;
 		}
-		tree->layout++;
 	}
 }
 
-void DeleteBSTNode(BSTree *tree, ElemType data)
+void DeleteBSTNode(BSTTree *tree, ElemType data)
 {
 	BSTNode *p = Search(tree->head, data);
 	if(p != NULL)
@@ -126,7 +124,6 @@ void DeleteBSTNode(BSTree *tree, ElemType data)
 			}
 		}
 		free(p);
-		tree->layout--;
 	}
 }
 
@@ -140,12 +137,12 @@ static void ReleaseBSTNode(BSTNode * node)
 	}
 }
 
-void ReleaseBSTree(BSTree *tree)
+void ReleaseBSTTree(BSTTree *tree)
 {
 	ReleaseBSTNode(tree->head);
 }
 
-void ShowBSTree(BSTree *tree)
+void ShowBSTTree(BSTTree *tree)
 {
 	ProductTreePicture(tree->head);
 }

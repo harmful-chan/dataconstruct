@@ -1,13 +1,16 @@
 GCC=gcc
 FLAGS= -std=c99 -g -m32 -I ./includes
 
-all: ds.o main.o avl.o bst.o  
+all: ds.o main.o avl.o bst.o  cbt.o 
 	$(GCC) -o a.out $(FLAGS) $^
 
 ds.o : ds.c 
 	$(GCC) -c $^ -o $@  $(FLAGS)
 
 bst.o : bst.c 
+	$(GCC) -c $^ -o $@  $(FLAGS)
+
+cbt.o : cbt.c  
 	$(GCC) -c $^ -o $@  $(FLAGS)
 
 avl.o : avl.c  

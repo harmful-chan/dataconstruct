@@ -12,33 +12,36 @@ static AVLNode *AdjustTree(AVLTree *tree);
 
 AVLTree *InitAVLTree(AVLTree *tree)
 {
-    return (AVLTree *)InitBSTree((BSTree *)tree);
+    AVLTree *p = F_INIT_TREE(AVLTree, tree);
+    p->name = AVL;
+    return p;
 }
 
 AVLNode *InitAVLNode(AVLNode *node, ElemType data)
 {
-    AVLNode *p = (AVLNode *)InitBSTNode((BSTNode *)node, data);
+    AVLNode *p = F_INIT_NODE(AVLNode, node, data);
     p->height = 0;
     return p;
 }
 
 AVLNode *InsertAVLNode(AVLTree *tree, AVLNode *node)
 {
-    AVLNode *p = (AVLNode *)InsertBSTNode((BSTree *)tree, (BSTNode *)node);
+    AVLNode *p = F_INSERT_NODE(AVLNode, tree, node);
     AdjustTree(tree);
 }
 void DeleteAVLNode(AVLTree *tree, ElemType data)
 {
-    DeleteBSTNode((BSTree *)tree, data);
+
+    F_DELETE_NODE(AVLTree, tree, data);
     AdjustTree(tree);
 }
 void ReleaseAVLTree(AVLTree *tree)
 {
-	ReleaseBSTree((BSTree *)tree);
+    F_RELEASE_TREE(AVLTree, tree);
 }
 void ShowAVLTree(AVLTree *tree)
 {
-    ShowBSTree((BSTree *)tree);
+    F_SHOW_TREE(AVLTree, tree);
 }
 
 static enum WHIRL_MODE AdjustMode(AVLNode *node)

@@ -259,7 +259,7 @@ void *ProductTreePicture(void *root)
 	Rotate45(&ds);
     // PrintDSNodeArray(&ds, 0, 10, 21);
 	VerticalStretch(&ds);
-    PrintDSNodeArray(&ds, 3, 16, 21);
+    PrintDSNodeArray(&ds, 3, 10, 21);
 
     ReleaseCloneTree(elm_root);
 	return NULL;

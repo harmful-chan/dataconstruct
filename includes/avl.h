@@ -14,16 +14,13 @@ enum WHIRL_MODE
 
 typedef struct avl_node
 {
-	ElemType data;
-	struct avl_node *left;
-	struct avl_node *rigt;
+	COM_NODE_INFO(struct avl_node)
     int height;
 }AVLNode;
 
 typedef struct avl_tree
 {
-	int layout;
-	struct avl_node *head;
+	COM_HEAD_INFO(struct avl_node)	
 }AVLTree;
 
 
