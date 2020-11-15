@@ -4,21 +4,21 @@
 #include "typedef.h"
 typedef struct queue_node_s
 {
-	elm_t data;
+	ElmType data;
 	struct queue_node_s *next, * prev;
-}queue_node_t;
+}QueueNode;
 
 typedef struct queue_s
 {
-	int is_empty;
+	int isEmpty;
 	int length;
 	struct queue_node_s *next, *prev;
-}queue_t;
+}Queue;
 
-extern queue_t *init_queue(queue_t *);
-extern queue_t *clean_queue(queue_t *);
-extern void entry(queue_t *, elm_t);
-extern elm_t out(queue_t *);
+extern Queue *InitQueue(Queue *);
+extern Queue *CleanQueue(Queue *);
+extern void Entry(Queue *, ElmType);
+extern ElmType Out(Queue *);
 
 #endif
 

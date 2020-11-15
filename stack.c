@@ -1,18 +1,18 @@
 #include "stack.h"
 #include <stdlib.h>
 
-stack_t *init_stack(stack_t *stack)
+Stack *InitStack(Stack *stack)
 {
-	stack->is_empty = 1;
+	stack->isEmpty = 1;
 	stack->next = NULL;
 	stack->first = 0;
 	return stack;
 }
 
-stack_t *clean_stack(stack_t *stack)
+Stack *CleanStack(Stack *stack)
 {
-	if( stack->is_empty ) return stack;
-	for( stack_node_t *n,*p = stack->next; p != NULL; p=n)
+	if( stack->isEmpty ) return stack;
+	for( StackNode *n,*p = stack->next; p != NULL; p=n)
 	{
 		n = p->next;
 		free(p);
@@ -20,31 +20,31 @@ stack_t *clean_stack(stack_t *stack)
 	return stack;
 }
 
-void push(stack_t *stack, elm_t new)
+void Push(Stack *stack, ElmType new)
 {
-	stack->is_empty = 0;
-	stack_node_t *p = (stack_node_t *)malloc(sizeof(stack_node_t));
+	stack->isEmpty = 0;
+	StackNode *p = (StackNode *)malloc(sizeof(StackNode));
 	p->data = new;
 
 	p->next = stack->next;
 	stack->next = p;
 	stack->first = new;
 }
-elm_t pop(stack_t *stack)
+ElmType Pop(Stack *stack)
 {
-	stack_node_t *p = stack->next;
+	StackNode *p = stack->next;
 	if( p != NULL )
 	{ 
 		stack->next = p->next;
 		if( stack->next == NULL )
 		{
-			stack->is_empty = 1;
+			stack->isEmpty = 1;
 			stack->first = 0;
 		}else
 		{
 			stack->first = stack->next->data;
 		}
-		elm_t data = p->data;
+		ElmType data = p->data;
 		free(p);
 		return data;
 	}

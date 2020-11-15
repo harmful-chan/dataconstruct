@@ -3,32 +3,32 @@
 #include <stdio.h>
 #include <string.h>
 
-static inline int is_symbol(char c)
+static inline int isSymbol(char c)
 {
 	return ((c == '*') || (c=='/') || (c=='+') || (c=='-'));
 }
 
-static inline int is_sym_prio(char c)
+static inline int IsSymPrio(char c)
 {
 	return ((c=='*') || (c=='/'));
 }
 
-static inline int is_brackets(char c) 
+static inline int IsBrackets(char c) 
 {
 
 	return ( (c=='(') || (c==')') );
 }
 
-static inline int is_number(char c)
+static inline int IsNumber(char c)
 {
 	return ((c >= 48) && (c <= 57));
 }
-static int get_first_num(char *str, int *num)
+static int GetFirstNumber(char *str, int *num)
 {
 	char cs[10] = {'\0'};
 	int i = 0;
 	for(char *p = str; 
-		p[i] != '\0' && is_number(p[i]); 
+		p[i] != '\0' && IsNumber(p[i]); 
 		cs[i] = p[i], i++);
 	sscanf(cs, "%d", num);
 	return strlen(cs);	
@@ -36,74 +36,74 @@ static int get_first_num(char *str, int *num)
 
 
 
-static void symbol_assignment(char c, stack_t* sym, queue_t* dst)
+static void SymbolAssignment(char c, Stack* sym, Queue* dst)
 {
-	if( !is_sym_prio(c) || (c == ')') )  // +,-,)
+	if( !IsSymPrio(c) || (c == ')') )  // +,-,)
 	{
 		char d = (char)sym->first; 
-		if( is_sym_prio(d) || c == ')' )  // *,/,)
+		if( IsSymPrio(d) || c == ')' )  // *,/,)
 		{
-			while( !sym->is_empty && (sym->first != '(') )
+			while( !sym->isEmpty && (sym->first != '(') )
 			{
-				entry(dst, pop(sym));
+				Entry(dst, Pop(sym));
 			}
 			if( sym->first == '(' )
 			{
-				pop(sym);
+				Pop(sym);
 				return;
 			}
 		}
 	}
-	push(sym, c);
+	Push(sym, c);
 }
-int infix_to_postfix(queue_t *dst, const char *infix)
+int InfixToPostfix(Queue *dst, const char *infix)
 {
-	stack_t sym;
-	init_stack(&sym);
+	Stack sym;
+	InitStack(&sym);
 	for(char *p = (char *)infix; *p != '\0'; )
 	{
-		if( is_number(*p) )
+		if( IsNumber(*p) )
 		{	
 			int len, num = 0;
-			len = get_first_num(p, &num);
+			len = GetFirstNumber(p, &num);
 			p += len;
-			entry(dst, num);
+			Entry(dst, num);
 		}
 		else
 		{
-			symbol_assignment(*p++, &sym, dst);
+			SymbolAssignment(*p++, &sym, dst);
 		}
 	}
 
-	while( !sym.is_empty ) entry(dst, pop(&sym));
+	while( !sym.isEmpty ) Entry(dst, Pop(&sym));
 	return dst->length;
 }
 
-int cypher_postfix(queue_t *q)
+int CypherPostfix(Queue *q)
 {
-	stack_t stack;
-	init_stack(&stack);
+	Stack stack;
+	InitStack(&stack);
 
-	while( !q->is_empty )
+	while( !q->isEmpty )
 	{
-		int v = (int)out(q);
-		if( !is_symbol((char)v) )
+		int v = (int)Out(q);
+		if( !isSymbol((char)v) )
 		{
-			push(&stack, v);
+			Push(&stack, v);
 		}
 		else
 		{
-			int b = (int)pop(&stack);
-			int f = (int)pop(&stack);
+			int b = (int)Pop(&stack);
+			int f = (int)Pop(&stack);
 			switch((char)v)
 			{
-				case '+': push(&stack, f+b); break;
-				case '-': push(&stack, f-b); break;
-				case '*': push(&stack, f*b); break;
-				case '/': push(&stack, f/b); break;
+				case '+': Push(&stack, f+b); break;
+				case '-': Push(&stack, f-b); break;
+				case '*': Push(&stack, f*b); break;
+				case '/': Push(&stack, f/b); break;
 				default : break;
 			}
 		}
 	}
-	return (int)pop(&stack);
+	return (int)Pop(&stack);
 }

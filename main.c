@@ -3,31 +3,31 @@
 #include "queue.h"
 #include "calculate.h"
 
-static inline int is_symbol(char c)
+static inline int isSymbol(char c)
 {
 	return ( (c=='+') || (c=='-') || (c=='*') || (c=='/') \
 			|| (c=='(') || (c==')'));
 }
 int main(int argc, char* argv[])
 {
-	queue_t q;
-	if( !init_queue(&q) ) printf("init queue fail!\r\n");
+	Queue q;
+	if( !InitQueue(&q) ) printf("init queue fail!\r\n");
 
 	char *exp = "1+2+3";
 	printf("input expression :%s\r\n", (argc==2)?argv[1]:exp);
 	if( argc == 2 )
-		infix_to_postfix(&q, argv[1]);
+		InfixToPostfix(&q, argv[1]);
 	else	
-		infix_to_postfix(&q, "1+2+3");
+		InfixToPostfix(&q, "1+2+3");
 		
-	int ret = cypher_postfix(&q);
+	int ret = CypherPostfix(&q);
 	printf("result : %d\r\n", ret);
 	
-	printf("queue is empty: %d\r\n", q.is_empty);
-	while( !q.is_empty )
+	printf("queue is empty: %d\r\n", q.isEmpty);
+	while( !q.isEmpty )
 	{
-		elm_t data = out(&q);
-		if( is_symbol((char)data) )
+		ElmType data = Out(&q);
+		if( isSymbol((char)data) )
 			printf("%c ", data);
 		else
 			printf("%d ", data);
@@ -38,35 +38,35 @@ int main(int argc, char* argv[])
 
 int test_sq(void)
 {
-	stack_t s;
-	if( !init_stack(&s) ) printf("init stack fail!\r\n");
-	queue_t q;
-	if( !init_queue(&q) ) printf("init queue fail!\r\n");
+	Stack s;
+	if( !InitStack(&s) ) printf("init stack fail!\r\n");
+	Queue q;
+	if( !InitQueue(&q) ) printf("init queue fail!\r\n");
 	
 	for(int i = 0; i < 10; i++)
 	{
-		push(&s, i);
-		entry(&q, i);
+		Push(&s, i);
+		Entry(&q, i);
 	}
 
 	for(int i = 0; i < 10; i++)
 	{
-		if( !s.is_empty )
+		if( !s.isEmpty )
 		{
-			elm_t data = pop(&s);
+			ElmType data = Pop(&s);
 			printf("%d%s", data, (i==9) ? "\r\n" : " ");
 		}
 	}
-	printf("stack is empty: %d\r\n", s.is_empty);
+	printf("stack is empty: %d\r\n", s.isEmpty);
 	for(int i = 0; i < 10; i++)
 	{
-		if( !q.is_empty )
+		if( !q.isEmpty )
 		{
-			elm_t data = out(&q);
+			ElmType data = Out(&q);
 			printf("%d%s", data, (i==9) ? "\r\n" : " ");
 		}
 	}
-	printf("queue is empty: %d\r\n", q.is_empty);
+	printf("queue is empty: %d\r\n", q.isEmpty);
 	
 
 	return 0;
