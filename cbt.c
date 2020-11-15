@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#pragma region Static DepictClue
+//Static DepictClue
 static void DepictLastNodeClue(CBTNode **pare, CBTNode *node)
 {
 	if(node != NULL)
@@ -46,9 +46,9 @@ static void DepictTreeClue(CBTTree *tree)
 	p = &(tree->super);
 	DepictLastNodeClue(&p, tree->head);
 }
-#pragma endregion
 
-#pragma region Static Obtain Node Not Use Clue
+
+// Static Obtain Node Not Use Clue
 static void ObtainNodeClue(CBTNode *node)
 {
 	if(node != NULL)
@@ -63,9 +63,8 @@ static void ObtainTreeClue(CBTTree *tree)
 	PrintCBTNodeDetail(&(tree->super));
 	ObtainNodeClue(tree->head);
 }
-#pragma endregion
 
-#pragma region Static Clean 
+// Static Clean 
 static void CleanTreeSuper(CBTTree *tree)
 {
 	tree->super.rtag = 0;
@@ -96,9 +95,8 @@ static void CleanTreeClue(CBTTree *tree)
 	CleanTreeSuper(tree);
 	CleanNodeClue(tree->head);
 }
-#pragma endregion
 
-#pragma region Static Obtain Node Use Clue
+// Static Obtain Node Use Clue
 static CBTNode *FindFirstNode(CBTNode *node)
 {
 	while(!node->ltag) 
@@ -111,9 +109,8 @@ static CBTNode *FindNextNode(CBTNode *node)
 	if(!node->rtag) return FindFirstNode(node->rigt);
 	else return node->rigt;
 }
-#pragma endregion
 
-#pragma region Interfaces
+// region Interfaces
 CBTNode *FindCBTNode(CBTTree *tree, ElemType data)
 {
 	for(CBTNode *p = FindFirstNode(tree->head); p != NULL; p = FindNextNode(p))

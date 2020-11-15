@@ -15,7 +15,7 @@ static void ReleaseBSTNode(BSTNode * node)
 	}
 }
 
-#pragma region Interfaces
+// Interfaces
 BSTNode *Search(BSTNode *head, ElemType data)
 {
 	BSTNode *p = head;
