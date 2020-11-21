@@ -7,6 +7,7 @@
 邻阶矩阵图，完成基本添加操作</br>
 
 ##### Sat Nov 21 15:42:51 CST 2020 harmful-chan 1148706823@qq.com 
+##### v0.0.1
 #### alg.c 
 添加 'IsAdjacent()' 'GetNeighbors()' 'GetFirstNeighbor()'
 #### mag.c
