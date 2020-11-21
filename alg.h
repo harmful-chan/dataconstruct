@@ -3,6 +3,8 @@
 
 #include "typedef.h"
 
+#define AV(v) ((AlVertex){ v , NULL })
+
 typedef char AlVertexElm;
 
 typedef struct al_edge_s 
@@ -22,10 +24,14 @@ typedef struct
 
 extern void InitAlGraph(AlGraph *);
 extern void CleanAlGraph(AlGraph *);
-extern void AddAlGraphVertex(AlGraph *, AlVertexElm);
-extern void AddAlGraphVertexs(AlGraph *mag, ...);
-extern void DeleteAlGraphVertex(AlGraph *, AlVertexElm);
-extern void AddAlGraphEdge(AlGraph *, AlVertexElm, AlVertexElm);
+extern void AddAlGraphVertex(AlGraph *, AlVertex v);
+extern void AddAlGraphVertexs(AlGraph *g, ...);
+extern void DeleteAlGraphVertex(AlGraph *, AlVertex v);
+extern void AddAlGraphEdge(AlGraph *, AlVertex v1, AlVertex v2);
 extern void ShowAlGraph(AlGraph *);
+
+extern int IsAlGraphAdjacent(AlGraph *g, AlVertex v1, AlVertex v2);
+extern void GetAlGraphNeighbors(AlVertex *buf, AlGraph *g, AlVertex v);
+extern AlVertex GetAlGraphFirstNeighbor(AlGraph *g, AlVertex v);
 
 #endif

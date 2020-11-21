@@ -22,8 +22,8 @@ clean :
 	rm -rf core.* a.out *.o
 
 log :
-	@echo -e '#####' \
+	@echo -e '\r\n#####' \
 	${shell date} \
 	${shell git config --get user.name} \
 	${shell git config --get user.email} '\n' \
-	${shell ls | grep .c} >> changelog.txt
+	${shell ls | grep .c} >> changelog.md

@@ -6,11 +6,11 @@
 #include <stdarg.h>
 
 // common
-static int IndexOf(AlGraph *g, AlVertexElm e)
+static int IndexOf(AlGraph *g, AlVertex v)
 {
     for(int i = 0; i < MAX_VERTEX_NUM && (*g)[i].data != '\0'; i++ )
     {
-        if((*g)[i].data == e) return i;
+        if((*g)[i].data == v.data) return i;
     }
     return -1;
 }
@@ -21,7 +21,6 @@ static int SizeOf(AlGraph *g)
     return i < MAX_VERTEX_NUM ? i : -1;
 }
 
-// init graph
 void InitAlGraph(AlGraph *g)
 {
     FOR(i, MAX_VERTEX_NUM)
@@ -59,16 +58,16 @@ void AddAlGraphVertexs(AlGraph *g, ...)
     for(AlVertexElm ver = (AlVertexElm)va_arg(p, int); ver != '\0'; 
         ver = (AlVertexElm)va_arg(p, int))
     {
-        AddAlGraphVertex(g, ver);
+        AddAlGraphVertex(g, AV(ver));
     }
     va_end(p);
 
 }
-void AddAlGraphVertex(AlGraph *g, AlVertexElm data)
+void AddAlGraphVertex(AlGraph *g, AlVertex v)
 {
     int len = SizeOf(g);
     if(len >= 0)
-    (*g)[len].data = data;
+    (*g)[len].data = v.data;
 }
 
 // add edge
@@ -82,17 +81,18 @@ static AlEdge *LastEdgeOf(AlEdge *v)
     }
     return NULL;
 }
-void AddAlGraphEdge(AlGraph *g, AlVertexElm s, AlVertexElm d)
+void AddAlGraphEdge(AlGraph *g, AlVertex v1, AlVertex v2)
 {
-    int is = IndexOf(g, s);
-    int id = IndexOf(g, d);
+    int is = IndexOf(g, v1);
+    int id = IndexOf(g, v2);
 
-    AlEdge *dstEdge = LastEdgeOf((*g)[is].edge);
+    AlEdge *last = LastEdgeOf((*g)[is].edge);
     AlEdge *e = (AlEdge *)malloc(sizeof(AlEdge));
     e->index = id;
     e->next = NULL;
-    if(dstEdge == NULL) (*g)[is].edge = e;
-    else dstEdge->next = e;
+
+    if(last == NULL) (*g)[is].edge = e;
+    else last->next = e;
 }
 
 // show
@@ -110,3 +110,33 @@ void ShowAlGraph(AlGraph *g)
     }
 
 }
+
+
+int IsAlGraphAdjacent(AlGraph *g, AlVertex v1, AlVertex v2)
+{
+    int i1 = IndexOf(g, v1);
+    int i2 = IndexOf(g, v2);
+
+    AlEdge *p = (*g)[i1].edge;
+    for(; p!=NULL ; p=p->next)
+    {
+        if( p->index == i2 ) return 1;
+    }
+
+    return 0;
+}
+void GetAlGraphNeighbors(AlVertex *buf, AlGraph *g, AlVertex v)
+{
+    int i1 = IndexOf(g, v);
+
+    AlEdge *p = (*g)[i1].edge;
+    for(; p!=NULL ; p=p->next)
+    {
+        *buf++ = (*g)[p->index];
+    }    
+}
+AlVertex GetAlGraphFirstNeighbor(AlGraph *g, AlVertex v)
+{
+    
+}
+
