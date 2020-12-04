@@ -1,12 +1,14 @@
 GCC=gcc
 CFLAGS= -std=c99 -g
 
-all : main.o gapimg.o mag.o alg.o
+all : main.o gapimg.o mag.o alg.o queue.o
 	$(GCC) -o a.out $^ $(CFLAGS)
+
+queue.o : queue.c
+	$(GCC) -c $^ -o $@ $(CFLAGS)
 
 main.o : main.c
 	$(GCC) -c $^ -o $@ $(CFLAGS)
-
 
 mag.o : mag.c
 	$(GCC) -c $^ -o $@ $(CFLAGS)

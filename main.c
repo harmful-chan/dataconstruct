@@ -1,47 +1,67 @@
 #include "mag.h"
 #include "alg.h"
 #include <stdio.h>
-#define ADD(a) 
+#include <string.h>
 
 int main(void)
 {
+    char src[] = "ABCDEFGHIJKLMN";
+    int len = strlen(src);
+    len = len <= MAX_VERTEX_NUM ? len : MAX_VERTEX_NUM;
+
     MaGraph mag;
-    printf(" MAG --- \r\n");
+    printf(" [INFO] --- --- --- MAG --- --- --- \r\n");
     InitMaGraph(&mag);
-    AddMaGraphVertexs(&mag, 'A', 'B', 'C', 'D', '\0');
-    AddMaGraphEdge(&mag, MV('A'), MV('B'));
-    AddMaGraphEdge(&mag, MV('B'), MV('C'));
-    AddMaGraphEdge(&mag, MV('C'), MV('D'));
-    AddMaGraphEdge(&mag, MV('D'), MV('A'));
+    for(int i = 0; i < len ; i++)
+    {
+        AddMaGraphVertex(&mag, MV(src[i]));
+    }
+    for(int i = 1; i < len ; i++)
+    {
+        AddMaGraphEdge(&mag, MV(src[i]), MV(src[i-1]));
+    }
     ShowMaGraph(&mag);
-    printf(" (A, B) is adjacent [%2d]\r\n", IsMaGraphAdjacent(&mag, MV('A'), MV('B')));
-    printf(" (A, C) is adjacent [%2d]\r\n", IsMaGraphAdjacent(&mag, MV('A'), MV('C')));
+    printf(" [INFO] (A, B) is adjacent [%2d]\r\n", IsMaGraphAdjacent(&mag, MV('A'), MV('B')));
+    printf(" [INFO] (A, C) is adjacent [%2d]\r\n", IsMaGraphAdjacent(&mag, MV('A'), MV('C')));
     MaVertex tmp[MAX_VERTEX_NUM] = {'\0'};
     GetMaGraphNeighbors(tmp, &mag, MV('A'));
-    printf(" (A) neighbors has [%10s]\r\n", tmp);
+    printf(" [INFO] (A) neighbors has [%5s]\r\n", tmp);
+    GetMaGraphBFS(tmp, &mag, 3);
+    printf(" [INFO] (D) BFS is [%10s]\r\n", tmp);
     CleanMaGraph(&mag);
 
 
     AlGraph alg;
-    printf(" ALG --- \r\n");
+    printf(" [INFO] --- --- --- ALG --- --- --- \r\n");
     InitAlGraph(&alg);
-    AddAlGraphVertexs(&alg, 'A', 'B', 'C', 'D', '\0');
-    AddAlGraphEdge(&alg, AV('A'), AV('B'));
-    AddAlGraphEdge(&alg, AV('B'), AV('C'));
-    AddAlGraphEdge(&alg, AV('C'), AV('D'));
-    AddAlGraphEdge(&alg, AV('D'), AV('A'));
+    for(int i = 0; i < len ; i++)
+    {
+        AddAlGraphVertex(&alg, AV(src[i]));
+    }
+    for(int i = 1; i < len ; i++)
+    {
+        AddAlGraphEdge(&alg, AV(src[i]), AV(src[i-1]));
+        AddAlGraphEdge(&alg, AV(src[i-1]), AV(src[i]));
+
+    }
     ShowAlGraph(&alg);
-    printf(" (A, B) is adjacent [%2d]\r\n", IsAlGraphAdjacent(&alg, AV('A'), AV('B')));
-    printf(" (A, C) is adjacent [%2d]\r\n", IsAlGraphAdjacent(&alg, AV('A'), AV('C')));
+    printf(" [INFO] (A, B) is adjacent [%2d]\r\n", IsAlGraphAdjacent(&alg, AV('A'), AV('B')));
+    printf(" [INFO] (A, C) is adjacent [%2d]\r\n", IsAlGraphAdjacent(&alg, AV('A'), AV('C')));
     AlVertex tmp1[MAX_VERTEX_NUM] = {{'\0', NULL}};
     GetAlGraphNeighbors(tmp1, &alg, AV('A'));
-    printf(" (A) neighbors has [");
-    for(int i = 0; tmp1[i].data != '\0'; i++)
+    printf(" [INFO] (A) neighbors has [");
+    for(int i = 0; tmp1[i].data != '\0' && i < MAX_VERTEX_NUM ; i++)
     {
         printf("%2c", tmp1[i].data);
     }
     printf("]\r\n");
-
+    GetAlGraphBFS(tmp1, &alg, 3);
+    printf(" [INFO] (D) BFS is [");
+    for(int i = 0; tmp1[i].data != '\0' && i < MAX_VERTEX_NUM ; i++)
+    {
+        printf("%2c", tmp1[i].data);
+    }
+    printf("]\r\n");
     CleanAlGraph(&alg);
     return 0;
 }

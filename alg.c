@@ -4,21 +4,23 @@
 #include <string.h>
 #include "gapimg.h"
 #include <stdarg.h>
+#include "queue.h"
 
 // common
 static int IndexOf(AlGraph *g, AlVertex v)
 {
     for(int i = 0; i < MAX_VERTEX_NUM && (*g)[i].data != '\0'; i++ )
     {
-        if((*g)[i].data == v.data) return i;
+        if( (*g)[i].data == v.data )
+            return i;
     }
     return -1;
 }
 static int SizeOf(AlGraph *g)
 {
-    int i = 0;
-    for(; i < MAX_VERTEX_NUM && (*g)[i].data != '\0'; i++ );
-    return i < MAX_VERTEX_NUM ? i : -1;
+    int i = MAX_VERTEX_NUM;
+    for(; i > 0 && (*g)[i-1].data == '\0'; i-- );
+    return i ;
 }
 
 void InitAlGraph(AlGraph *g)
@@ -102,7 +104,7 @@ void ShowAlGraph(AlGraph *g)
     for(int i = 0 ; i < len; i++)
     {
         printf(" [%c:%d]", (*g)[i].data, i);
-        for(AlEdge *e = (*g)[i].edge; e != NULL; e = (*g)[i].edge->next)
+        for(AlEdge *e = (*g)[i].edge; e != NULL; e = e->next)
         {
             printf(" -> {%c:%d}", (*g)[e->index].data, e->index);            
         }
@@ -111,7 +113,7 @@ void ShowAlGraph(AlGraph *g)
 
 }
 
-
+// Search
 int IsAlGraphAdjacent(AlGraph *g, AlVertex v1, AlVertex v2)
 {
     int i1 = IndexOf(g, v1);
@@ -135,8 +137,50 @@ void GetAlGraphNeighbors(AlVertex *buf, AlGraph *g, AlVertex v)
         *buf++ = (*g)[p->index];
     }    
 }
-AlVertex GetAlGraphFirstNeighbor(AlGraph *g, AlVertex v)
+void GetAlGraphBFS(AlVertex *buf, AlGraph *g, int v)
 {
-    
+    int flag[MAX_VERTEX_NUM] = {0};
+    Queue q;
+    int i = 0;
+    InitQueue(&q);
+    Entry(&q, v);
+    flag[v]= 1;
+
+    while(!q.isEmpty)
+    {
+        int r = (int)Out(&q);
+        buf[i++] = (*g)[r];
+        for(int n = GetAlGraphFirstNeighborIndex(g, r); n >= 0 ;
+            n = GetAlGraphNextNeighborIndex(g, r, n))
+        {
+            if( flag[n] == 0 )
+            {
+                Entry(&q, n);
+                flag[n] = 1;
+            }
+        }
+        for(int j = 0; j < MAX_VERTEX_NUM; j++)
+            printf("%d ", flag[j]);
+        printf("\r\n");
+    }
 }
+int GetAlGraphFirstNeighborIndex(AlGraph *g, int v)
+{
+    if( (*g)[v].edge != NULL )
+        return (*g)[v].edge->index;
+    else   
+        return -1;
+}
+int GetAlGraphNextNeighborIndex(AlGraph *g, int v, int n)
+{
+    for(AlEdge *r = (*g)[v].edge; r != NULL ; r = r->next)
+    {
+        if( r->index == n )
+        {
+            return r->next ? r->next->index : -1;
+        }
+    }
+    return -1;
+}
+
 

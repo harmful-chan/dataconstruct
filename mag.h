@@ -20,19 +20,21 @@ typedef struct mag_s
     int edge[MAX_VERTEX_NUM][MAX_VERTEX_NUM];
 }MaGraph;
 
+
 extern void InitMaGraph(MaGraph *g);
 extern void CleanMaGraph(MaGraph *g);
 extern void AddMaGraphVertex(MaGraph *g, MaVertex v);
-//extern void DeleteMaGraphVertex(MaGraph *g, MaVertex v);
 extern void AddMaGraphEdge(MaGraph *g, MaVertex v1, MaVertex v2);
-//extern void DeleteMaGraphEdge(MaGraph *g, MaVertex v1, MaVertex v2);
 extern void AddMaGraphVertexs(MaGraph *g, ...);
 extern void ShowMaGraph(MaGraph *g);
 
 extern int IsMaGraphAdjacent(MaGraph *g, MaVertex v1, MaVertex v2);
 extern void GetMaGraphNeighbors(MaVertex *buf, MaGraph *g, MaVertex v);
-extern MaVertex GetMaGraphFirstNeighbor(MaGraph *g, MaVertex v);
-// extern void GetMaGraphxtNeighbor(MaVertex *, MaVertex v1, MaVertex v2);
+
+extern void GetMaGraphBFS(MaVertex *buf, MaGraph *g, int v);
+extern int GetMaGraphFirstNeighborIndex(MaGraph *g, int v);
+extern int GetMaGraphNextNeighborIndex(MaGraph *g, int v, int n);
+
 
 
 #endif

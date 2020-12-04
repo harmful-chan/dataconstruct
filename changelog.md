@@ -11,6 +11,17 @@
 #### alg.c 
 添加 'IsAdjacent()' 'GetNeighbors()' 'GetFirstNeighbor()'
 #### mag.c
-同上
+同d上d
 #### main.c
 修改显示I方式， 同时显示 mag & alg
+
+##### Fri Dec 4 12:02:32 CST 2020 harmful-chan 1148706823@qq.com 
+#### v0.0.2
+#### alg.c 
+添加BFS搜索方式 `GetAlGraphBFS()`
+##### mag.c 
+添加BFS搜索方式 `GetMaGraphBFS()`
+#### main.c 
+添加alg 和 mag 的使用师例
+#### queue.c
+修改元数据类型名称

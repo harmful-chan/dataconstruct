@@ -34,4 +34,10 @@ extern int IsAlGraphAdjacent(AlGraph *g, AlVertex v1, AlVertex v2);
 extern void GetAlGraphNeighbors(AlVertex *buf, AlGraph *g, AlVertex v);
 extern AlVertex GetAlGraphFirstNeighbor(AlGraph *g, AlVertex v);
 
+extern void GetAlGraphBFS(AlVertex *buf, AlGraph *g, int v);
+extern int GetAlGraphFirstNeighborIndex(AlGraph *g, int v);
+extern int GetAlGraphNextNeighborIndex(AlGraph *g, int v, int n);
+
+
+
 #endif
