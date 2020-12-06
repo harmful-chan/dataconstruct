@@ -24,7 +24,7 @@ Queue *CleanQueue(Queue *queue)
 	return queue;
 }
 
-void Entry(Queue *queue, ElmType new)
+void Entry(Queue *queue, QueueElemType new)
 {
 	queue->isEmpty = 0;
 	queue->length++;
@@ -45,7 +45,7 @@ void Entry(Queue *queue, ElmType new)
 		queue->next = p;
 	}
 }
-ElmType Out(Queue *queue)
+QueueElemType Out(Queue *queue)
 {
 	QueueNode *p = queue->prev;
 	if( p->prev == (QueueNode *)queue )
@@ -61,7 +61,7 @@ ElmType Out(Queue *queue)
 		queue->prev = p->prev;
 		queue->length--;
 	}
-	ElmType data = p->data;
+	QueueElemType data = p->data;
 	free(p);
 	return data;
 }

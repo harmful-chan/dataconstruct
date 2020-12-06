@@ -1,10 +1,11 @@
 #ifndef _QUEUE_H_
 #define _QUEUE_H_
 
-#include "typedef.h"
+
+#define QueueElemType int
 typedef struct queue_node_s
 {
-	ElmType data;
+	QueueElemType data;
 	struct queue_node_s *next, * prev;
 }QueueNode;
 
@@ -17,8 +18,8 @@ typedef struct queue_s
 
 extern Queue *InitQueue(Queue *);
 extern Queue *CleanQueue(Queue *);
-extern void Entry(Queue *, ElmType);
-extern ElmType Out(Queue *);
+extern void Entry(Queue *, QueueElemType);
+extern QueueElemType Out(Queue *);
 
 #endif
 
