@@ -20,7 +20,7 @@ Stack *CleanStack(Stack *stack)
 	return stack;
 }
 
-void Push(Stack *stack, ElmType new)
+void Push(Stack *stack, StackElemType new)
 {
 	stack->isEmpty = 0;
 	StackNode *p = (StackNode *)malloc(sizeof(StackNode));
@@ -30,7 +30,7 @@ void Push(Stack *stack, ElmType new)
 	stack->next = p;
 	stack->first = new;
 }
-ElmType Pop(Stack *stack)
+StackElemType Pop(Stack *stack)
 {
 	StackNode *p = stack->next;
 	if( p != NULL )
@@ -44,7 +44,7 @@ ElmType Pop(Stack *stack)
 		{
 			stack->first = stack->next->data;
 		}
-		ElmType data = p->data;
+		StackElemType data = p->data;
 		free(p);
 		return data;
 	}
