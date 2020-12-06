@@ -10,7 +10,7 @@ main.o : main.c
 stack.o : stack.c
 	$(GCC) -o $@ -c $^ $(CFLAGS)
 
-stack.a :
+stack.a : stack.o
 	ar rv lib$@ $^
 
 clean : 
