@@ -3,12 +3,24 @@
 #include "queue.h"
 #include "calculate.h"
 
+void stack_run();
+void queue_run();
+void calculate_run(int argc, char* argv[]);
+
+
+int main(int argc, char* argv[])
+{
+	stack_run();
+	queue_run();
+	calculate_run(argc, argv);
+}
+
 static inline int isSymbol(char c)
 {
 	return ( (c=='+') || (c=='-') || (c=='*') || (c=='/') \
 			|| (c=='(') || (c==')'));
 }
-int main(int argc, char* argv[])
+void calculate_run(int argc, char* argv[])
 {
 	Queue q;
 	if( !InitQueue(&q) ) printf("init queue fail!\r\n");
@@ -33,20 +45,15 @@ int main(int argc, char* argv[])
 			printf("%d ", data);
 	}printf("\r\n");
 
-	return 0;
 }
 
-int test_sq(void)
+void stack_run(void)
 {
 	Stack s;
 	if( !InitStack(&s) ) printf("init stack fail!\r\n");
-	Queue q;
-	if( !InitQueue(&q) ) printf("init queue fail!\r\n");
-	
 	for(int i = 0; i < 10; i++)
 	{
 		Push(&s, i);
-		Entry(&q, i);
 	}
 
 	for(int i = 0; i < 10; i++)
@@ -57,7 +64,18 @@ int test_sq(void)
 			printf("%d%s", data, (i==9) ? "\r\n" : " ");
 		}
 	}
-	printf("stack is empty: %d\r\n", s.isEmpty);
+}
+
+
+void queue_run(void)
+{
+	Queue q;
+	if( !InitQueue(&q) ) printf("init queue fail!\r\n");
+	
+	for(int i = 0; i < 10; i++)
+	{
+		Entry(&q, i);
+	}
 	for(int i = 0; i < 10; i++)
 	{
 		if( !q.isEmpty )
@@ -67,10 +85,5 @@ int test_sq(void)
 		}
 	}
 	printf("queue is empty: %d\r\n", q.isEmpty);
-	
-
-	return 0;
 }
-
-
 

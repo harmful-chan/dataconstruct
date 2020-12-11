@@ -23,6 +23,7 @@ static inline int IsNumber(char c)
 {
 	return ((c >= 48) && (c <= 57));
 }
+
 static int GetFirstNumber(char *str, int *num)
 {
 	char cs[10] = {'\0'};
